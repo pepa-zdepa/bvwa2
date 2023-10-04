@@ -2,7 +2,7 @@ package cz.upce.database.table
 
 import org.jetbrains.exposed.sql.Table
 
-class Users : Table() {
+object Users : Table() {
     val id = long("id").autoIncrement()
     val firstName = varchar("firstname", 20)
     val lastName = varchar("lastname", 20)

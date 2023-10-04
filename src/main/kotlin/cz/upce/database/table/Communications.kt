@@ -4,7 +4,7 @@ import cz.upce.database.model.User
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
-class Communications : Table() {
+object Communications : Table() {
     val id = long("id").autoIncrement()
     val subject = varchar("subject", 50)
     val from = long("from")

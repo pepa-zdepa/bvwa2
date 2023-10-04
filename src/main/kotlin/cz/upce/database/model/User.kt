@@ -7,7 +7,7 @@ data class User(
     val lastName: String,
     val password: String,
     val img: BufferedImage,
-    val role: Roles,
+    var role: Roles,
     val nickName: String
 ) {
     var id: Long = 0
