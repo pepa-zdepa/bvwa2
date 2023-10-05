@@ -12,10 +12,11 @@ import java.io.File
 
 data class UserPrincipal(val remoteHost: String, val roles: List<String> = listOf()) : Principal
 
+// TODO database storage
+val storage = directorySessionStorage(File("build/.sessions"), true) // bez transform(...) vyhodí "sessionId not set" po logout
+
 fun Application.configureAuth() {
     install(Sessions) {
-        // TODO database storage
-        val storage = directorySessionStorage(File("build/.sessions"), true) // bez transform(...) vyhodí "sessionId not set" po logout
         cookie<UserPrincipal>("user_session", storage) {
             cookie.path = "/"
             cookie.maxAgeInSeconds = 60
