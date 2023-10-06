@@ -2,6 +2,7 @@ package cz.upce.bvwa2
 
 import com.sksamuel.hoplite.*
 import com.sksamuel.hoplite.sources.SystemPropertiesPropertySource
+import java.io.File
 
 data class Config(
     val development: Boolean,
@@ -10,7 +11,16 @@ data class Config(
 ) {
     data class Server(
         val port: Int,
-    )
+        val ssl: Ssl,
+    ) {
+        data class Ssl(
+            val keyAlias: String,
+            val keyStorePassword: String,
+            val privateKeyPassword: String,
+            val port: Int,
+            val keyStorePath: File,
+        )
+    }
     data class Auth(
         val session: Session,
     ) {
