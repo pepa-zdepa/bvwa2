@@ -1,6 +1,7 @@
 package cz.upce.bvwa2.routes.auth
 
 import cz.upce.bvwa2.auth.UserPrincipal
+import cz.upce.bvwa2.auth.sessionStorage
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.resources.post
@@ -21,6 +22,7 @@ fun Route.authRoutes() {
         authenticate("session") {
             post<Logout> {
                 call.sessions.clear<UserPrincipal>()
+                sessionStorage.invalidate(call.sessionId!!)
 
                 call.respondRedirect("/login")
             }

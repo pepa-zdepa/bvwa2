@@ -7,23 +7,28 @@ import io.ktor.server.auth.*
 import io.ktor.server.plugins.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
-import io.ktor.util.*
-import java.io.File
 
-data class UserPrincipal(val remoteHost: String, val roles: List<String> = listOf()) : Principal
+data class UserPrincipal(
+    val remoteHost: String,
+    val expiration: Long,
+    val roles: Set<String> = setOf("user"),
+) : Principal
 
 // TODO database storage
-val storage = directorySessionStorage(File("build/.sessions"), true) // bez transform(...) vyhodí "sessionId not set" po logout
+//val sessionStorage = directorySessionStorage(File("build/.sessions"), true) // bez transform(...) vyhodí "sessionId not set" po logout
+val sessionStorage = SessionStorageMemory()
+private fun getExpiration() = System.currentTimeMillis() + config.auth.session.expirationInSeconds * 1000
+private fun validateExpiration(expiration: Long) = expiration > System.currentTimeMillis()
 
 fun Application.configureAuth() {
     install(Sessions) {
-        cookie<UserPrincipal>("user_session", storage) {
+        cookie<UserPrincipal>("user_session", sessionStorage) {
             cookie.path = "/"
-            cookie.maxAgeInSeconds = 60
+            cookie.maxAgeInSeconds = config.auth.session.expirationInSeconds
             cookie.secure = false // TODO true
             cookie.httpOnly = true
-//            cookie.extensions["SameSite"] = "lax" // TODO
-            transform(SessionTransportTransformerEncrypt(hex(config.auth.session.encryptKey), hex(config.auth.session.signKey)))
+            cookie.extensions["SameSite"] = "lax"
+//            transform(SessionTransportTransformerEncrypt(hex(config.auth.session.encryptKey), hex(config.auth.session.signKey)))
         }
     }
 
@@ -35,7 +40,7 @@ fun Application.configureAuth() {
             validate {credentials ->
                 // TODO get data from DB
                 if (credentials.name == "user" && credentials.password == "pass") {
-                    UserPrincipal(request.origin.remoteHost)
+                    UserPrincipal(request.origin.remoteHost, getExpiration())
                 } else {
                     null
                 }
@@ -48,10 +53,14 @@ fun Application.configureAuth() {
 
         session<UserPrincipal>("session") {
             validate { session ->
-                if (request.origin.remoteHost != session.remoteHost) return@validate null
+                if (request.origin.remoteHost != session.remoteHost || !validateExpiration(session.expiration)) {
+                    sessionStorage.invalidate(sessionId!!)
+                    return@validate null
+                }
 
-                sessions.set(UserPrincipal(session.remoteHost))
-                session
+                val newSession = session.copy(expiration = getExpiration())
+                sessions.set(newSession)
+                newSession
             }
 
             challenge {

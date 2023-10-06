@@ -17,6 +17,7 @@ data class Config(
         data class Session(
             val encryptKey: String,
             val signKey: String,
+            val expirationInSeconds: Long,
         )
     }
 }
