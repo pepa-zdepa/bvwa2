@@ -1,6 +1,6 @@
 package cz.upce.database.model
 
-enum class Roles {
+enum class Role {
     ADMIN,
     USER
 }
