@@ -25,6 +25,8 @@ application {
 
 repositories {
     mavenCentral()
+
+    maven { url = uri("https://jitpack.io") } // ktor-role-based-auth
 }
 
 dependencies {
@@ -41,6 +43,9 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
+
+    // Auth
+    implementation("com.github.omkar-tenkale:ktor-role-based-auth:0.2.0")
 
     // Database
     implementation("com.h2database:h2:$h2_version")

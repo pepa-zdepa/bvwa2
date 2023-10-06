@@ -1,6 +1,7 @@
 package cz.upce.bvwa2.auth
 
 import cz.upce.bvwa2.config
+import io.github.omkartenkale.ktor_role_based_auth.roleBased
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -66,6 +67,13 @@ fun Application.configureAuth() {
             challenge {
                 call.respond(HttpStatusCode.Unauthorized, "Invalid credentials")
             }
+        }
+
+        roleBased {
+            extractRoles {
+                (it as UserPrincipal).roles
+            }
+            throwErrorOnUnauthorizedResponse = true
         }
     }
 }

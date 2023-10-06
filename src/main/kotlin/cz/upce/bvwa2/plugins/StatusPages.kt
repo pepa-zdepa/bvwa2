@@ -1,5 +1,6 @@
 package cz.upce.bvwa2.plugins
 
+import io.github.omkartenkale.ktor_role_based_auth.UnauthorizedAccessException
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.statuspages.*
@@ -11,6 +12,9 @@ fun Application.configureStatusPages() {
         exception<Throwable> { call, cause ->
             cause.printStack()
             call.respondText(text = "500: $cause" , status = HttpStatusCode.InternalServerError)
+        }
+        exception<UnauthorizedAccessException> { call, cause ->
+            call.respondText(text = "Unauthorized" , status = HttpStatusCode.Forbidden)
         }
     }
 }
