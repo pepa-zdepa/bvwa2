@@ -1,5 +1,6 @@
 package cz.upce.database
 
+import org.mindrot.jbcrypt.BCrypt
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -19,6 +20,14 @@ class Converter {
         } finally {
             byteArrayOutputStream.close()
         }
+    }
+
+    fun hashPassword(password: String): String {
+        return BCrypt.hashpw(password, BCrypt.gensalt())
+    }
+
+    fun checkPassword(candidate: String, hashed: String): Boolean {
+        return BCrypt.checkpw(candidate, hashed)
     }
 }
 

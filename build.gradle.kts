@@ -54,7 +54,6 @@ dependencies {
     implementation("org.xerial:sqlite-jdbc:3.36.0.3")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
     implementation("io.ktor:ktor-server-metrics-micrometer-jvm:$ktor_version")
-    implementation("io.micrometer:micrometer-registry-prometheus:$prometeus_version")
     implementation("io.ktor:ktor-server-metrics-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-call-logging-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-call-id-jvm:$ktor_version")
@@ -69,6 +68,9 @@ dependencies {
 
     // Auth
     implementation("com.github.omkar-tenkale:ktor-role-based-auth:0.2.0")
+
+    //Pass encrypt
+    implementation("org.mindrot:jbcrypt:0.4")
 
     // Database
     implementation("com.h2database:h2:$h2_version")
