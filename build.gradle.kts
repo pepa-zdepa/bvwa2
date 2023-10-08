@@ -1,3 +1,5 @@
+import io.ktor.network.tls.certificates.*
+
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -6,6 +8,15 @@ val exposed_version: String by project
 val h2_version: String by project
 val postgres_version: String by project
 val hoplite_version: String by project
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("io.ktor:ktor-network-tls-certificates:2.3.4")
+    }
+}
 
 plugins {
     kotlin("jvm") version "1.9.10"
@@ -25,6 +36,8 @@ application {
 
 repositories {
     mavenCentral()
+
+    maven { url = uri("https://jitpack.io") } // ktor-role-based-auth
 }
 
 dependencies {
@@ -41,6 +54,11 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
+    implementation("io.ktor:ktor-network-tls-certificates:$ktor_version")
+    implementation("io.ktor:ktor-server-http-redirect:$ktor_version")
+
+    // Auth
+    implementation("com.github.omkar-tenkale:ktor-role-based-auth:0.2.0")
 
     // Database
     implementation("com.h2database:h2:$h2_version")
@@ -55,6 +73,7 @@ dependencies {
     // Hoplite
     implementation("com.sksamuel.hoplite:hoplite-core:$hoplite_version")
     implementation("com.sksamuel.hoplite:hoplite-hocon:$hoplite_version")
+    implementation("io.ktor:ktor-server-http-redirect-jvm:2.3.4")
 
     // Tests
     testImplementation(kotlin("test"))
@@ -67,3 +86,18 @@ tasks.test {
     outputs.upToDateWhen { false }
 }
 
+tasks.classes {
+    dependsOn(generateSslCertificate)
+}
+
+val generateSslCertificate by tasks.registering {
+    val keyStoreFile = File("build/keystore.jks")
+    inputs.file(keyStoreFile)
+    val keyStore = buildKeyStore {
+        certificate("sampleAlias") {
+            password = "foobar"
+            domains = listOf("127.0.0.1", "0.0.0.0", "localhost")
+        }
+    }
+    keyStore.saveToFile(keyStoreFile, "123456")
+}

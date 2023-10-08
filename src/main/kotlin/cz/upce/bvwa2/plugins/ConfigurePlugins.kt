@@ -7,4 +7,5 @@ fun Application.configurePlugins() {
     configureContentNegotiation()
     configureResources()
     configureStatusPages()
+    configureHttpsRedirect()
 }
