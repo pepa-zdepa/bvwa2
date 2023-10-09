@@ -1,12 +1,75 @@
 package cz.upce.database
 
 import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
 import java.security.KeyStore
+import java.security.KeyStoreException
+import java.security.NoSuchAlgorithmException
+import java.security.UnrecoverableEntryException
+import java.security.cert.CertificateException
 import java.util.*
 import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 
 class Encryption {
+
+    fun generateSecretKey(): SecretKey {
+        val keyGenerator = KeyGenerator.getInstance("AES")
+        keyGenerator.init(256)
+
+        return keyGenerator.generateKey()
+    }
+
+    fun storeSecretKey(alias: String, secretKey: SecretKey, keystorePassword: CharArray, keyPassword: CharArray, keystorePath: String) {
+        try {
+            val keyStore = KeyStore.getInstance("JCEKS")
+            val keyStoreFile = java.io.File(keystorePath)
+            if (keyStoreFile.exists()) {
+                keyStore.load(FileInputStream(keyStoreFile), keystorePassword)
+            } else {
+                keyStore.load(null, null)
+            }
+
+            val secretKeyEntry = KeyStore.SecretKeyEntry(secretKey)
+            keyStore.setEntry(alias, secretKeyEntry, KeyStore.PasswordProtection(keyPassword))
+
+            // Save the keystore to a file
+            keyStore.store(FileOutputStream(keyStoreFile), keystorePassword)
+        } catch (e: KeyStoreException) {
+            e.printStackTrace()
+        } catch (e: CertificateException) {
+            e.printStackTrace()
+        } catch (e: NoSuchAlgorithmException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun loadSecretKey(alias: String, keystorePassword: CharArray, keyPassword: CharArray, keystorePath: String): SecretKey? {
+        try {
+            val keyStore = KeyStore.getInstance("JCEKS")
+            keyStore.load(FileInputStream(keystorePath), keystorePassword)
+
+            val secretKeyEntry = keyStore.getEntry(alias, KeyStore.PasswordProtection(keyPassword)) as KeyStore.SecretKeyEntry?
+            return secretKeyEntry?.secretKey
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: NoSuchAlgorithmException) {
+            e.printStackTrace()
+        } catch (e: CertificateException) {
+            e.printStackTrace()
+        } catch (e: UnrecoverableEntryException) {
+            e.printStackTrace()
+        } catch (e: KeyStoreException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+
     fun encrypt(data: String, secretKey: SecretKey): String {
         val cipher = Cipher.getInstance("AES")
         cipher.init(Cipher.ENCRYPT_MODE, secretKey)
