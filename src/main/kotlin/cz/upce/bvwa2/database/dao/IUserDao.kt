@@ -13,5 +13,5 @@ interface IUserDao {
 
     fun update(user: User)
 
-    fun delete(user: User)
+    fun delete(id: Long)
 }

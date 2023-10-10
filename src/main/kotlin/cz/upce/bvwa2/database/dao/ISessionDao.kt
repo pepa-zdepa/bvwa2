@@ -1,9 +1,11 @@
 package cz.upce.bvwa2.database.dao
 
+import cz.upce.bvwa2.database.model.Session
+
 interface ISessionDao {
-    fun write(id: String, value: String)
+    fun getByid(id: String): Session?
 
-    fun invalidate(id: String)
+    fun add(id: String, value: String)
 
-    fun read(id: String): String
+    fun delete(id: String)
 }

@@ -4,10 +4,8 @@ import cz.upce.bvwa2.database.PersistenceException
 import cz.upce.bvwa2.database.converter
 import cz.upce.bvwa2.database.model.User
 import cz.upce.bvwa2.database.table.Users
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class UserDao : IUserDao {
     override fun getAll(): List<User> {
@@ -42,11 +40,26 @@ class UserDao : IUserDao {
     }
 
     override fun update(user: User) {
-        TODO("Not yet implemented")
+        try {
+            Users.update({ Users.id eq user.id }) {
+                it[firstName] = user.firstName
+                it[lastName] = user.lastName
+                it[password] = user.password
+                it[img] = user.img
+                it[role] = user.role
+                it[nickName] = user.nickName
+            }
+        } catch (e: Exception) {
+            throw PersistenceException("Chyba při update user do databáze", e)
+        }
     }
 
-    override fun delete(user: User) {
-        TODO("Not yet implemented")
+    override fun delete(id: Long) {
+        try {
+            Users.deleteWhere { (Users.id eq id) }
+        } catch (e: Exception) {
+            throw PersistenceException("Chyba při delete user v databázi", e)
+        }
     }
 
     private fun mapRowToEntity(row: ResultRow): User {
@@ -64,3 +77,5 @@ class UserDao : IUserDao {
     }
 
 }
+
+val userDao: IUserDao = UserDao()
