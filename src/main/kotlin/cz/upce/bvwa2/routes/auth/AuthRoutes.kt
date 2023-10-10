@@ -2,6 +2,7 @@ package cz.upce.bvwa2.routes.auth
 
 import cz.upce.bvwa2.auth.UserPrincipal
 import cz.upce.bvwa2.auth.sessionStorage
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.resources.post
@@ -15,7 +16,7 @@ fun Route.authRoutes() {
             post<Login> {
                 call.sessions.set(call.principal<UserPrincipal>())
 
-                call.respondRedirect("/index")
+                call.respond(HttpStatusCode.OK)
             }
         }
 
@@ -24,7 +25,11 @@ fun Route.authRoutes() {
                 call.sessions.clear<UserPrincipal>()
                 sessionStorage.invalidate(call.sessionId!!)
 
-                call.respondRedirect("/login")
+                call.respond(HttpStatusCode.OK)
+            }
+
+            post<Refresh> {
+                call.respond(HttpStatusCode.OK)
             }
         }
     }

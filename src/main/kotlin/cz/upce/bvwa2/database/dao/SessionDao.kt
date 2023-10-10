@@ -6,7 +6,7 @@ import cz.upce.bvwa2.database.table.Sessions
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.replace
 import org.jetbrains.exposed.sql.select
 
 class SessionDao : ISessionDao {
@@ -18,7 +18,7 @@ class SessionDao : ISessionDao {
 
     override fun add(id: String, value: String) {
         try {
-            Sessions.insert {
+            Sessions.replace {
                 it[Sessions.id] = id
                 it[Sessions.data] = value
             }
