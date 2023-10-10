@@ -1,6 +1,6 @@
-package cz.upce.database.table
+package cz.upce.bvwa2.database.table
 
-import cz.upce.database.model.User
+import cz.upce.bvwa2.database.model.User
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 

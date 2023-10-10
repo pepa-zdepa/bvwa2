@@ -1,4 +1,4 @@
-package cz.upce.database.table
+package cz.upce.bvwa2.database.table
 
 import org.jetbrains.exposed.sql.Table
 

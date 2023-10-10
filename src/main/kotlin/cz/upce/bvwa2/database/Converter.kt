@@ -1,4 +1,4 @@
-package cz.upce.database
+package cz.upce.bvwa2.database
 
 import org.mindrot.jbcrypt.BCrypt
 import java.awt.image.BufferedImage

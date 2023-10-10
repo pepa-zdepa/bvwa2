@@ -1,6 +1,6 @@
-package cz.upce.database.dao
+package cz.upce.bvwa2.database.dao
 
-import cz.upce.database.model.Communication
+import cz.upce.bvwa2.database.model.Communication
 
 interface ICommunicationDao {
     fun getAll(): List<Communication>

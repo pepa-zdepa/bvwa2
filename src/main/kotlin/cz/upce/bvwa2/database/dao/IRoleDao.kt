@@ -1,6 +1,6 @@
-package cz.upce.database.dao
+package cz.upce.bvwa2.database.dao
 
-import cz.upce.database.model.Role
+import cz.upce.bvwa2.database.model.Role
 
 interface IRoleDao {
     fun getAll(): List<Role>

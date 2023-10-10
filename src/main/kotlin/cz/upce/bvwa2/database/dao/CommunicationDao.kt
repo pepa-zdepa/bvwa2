@@ -1,8 +1,8 @@
-package cz.upce.database.dao
+package cz.upce.bvwa2.database.dao
 
-import cz.upce.database.PersistenceException
-import cz.upce.database.model.Communication
-import cz.upce.database.table.Communications
+import cz.upce.bvwa2.database.PersistenceException
+import cz.upce.bvwa2.database.model.Communication
+import cz.upce.bvwa2.database.table.Communications
 import org.jetbrains.exposed.sql.*
 
 class CommunicationDao : ICommunicationDao {

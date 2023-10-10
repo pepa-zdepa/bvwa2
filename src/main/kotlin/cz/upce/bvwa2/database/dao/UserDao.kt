@@ -1,9 +1,9 @@
-package cz.upce.database.dao
+package cz.upce.bvwa2.database.dao
 
-import cz.upce.database.PersistenceException
-import cz.upce.database.converter
-import cz.upce.database.model.User
-import cz.upce.database.table.Users
+import cz.upce.bvwa2.database.PersistenceException
+import cz.upce.bvwa2.database.converter
+import cz.upce.bvwa2.database.model.User
+import cz.upce.bvwa2.database.table.Users
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select

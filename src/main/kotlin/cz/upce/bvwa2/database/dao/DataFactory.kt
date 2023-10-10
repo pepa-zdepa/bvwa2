@@ -1,8 +1,8 @@
-package cz.upce.database.dao
+package cz.upce.bvwa2.database.dao
 
-import cz.upce.database.table.Communications
-import cz.upce.database.table.Roles
-import cz.upce.database.table.Users
+import cz.upce.bvwa2.database.table.Communications
+import cz.upce.bvwa2.database.table.Roles
+import cz.upce.bvwa2.database.table.Users
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert

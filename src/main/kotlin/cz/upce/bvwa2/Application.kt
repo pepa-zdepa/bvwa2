@@ -3,6 +3,7 @@ package cz.upce.bvwa2
 import cz.upce.bvwa2.auth.configureAuth
 import cz.upce.bvwa2.plugins.configurePlugins
 import cz.upce.bvwa2.routes.configureRoutes
+import cz.upce.bvwa2.database.dao.DataFactory
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -41,4 +42,5 @@ fun Application.module() {
     configurePlugins()
     configureAuth()
     configureRoutes()
+    DataFactory.init()
 }

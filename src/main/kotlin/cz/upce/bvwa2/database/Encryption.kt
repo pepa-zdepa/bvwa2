@@ -1,4 +1,4 @@
-package cz.upce.database
+package cz.upce.bvwa2.database
 
 import java.io.FileInputStream
 import java.io.FileOutputStream

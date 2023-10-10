@@ -1,4 +1,4 @@
-package cz.upce.database.model
+package cz.upce.bvwa2.database.model
 
 import kotlinx.datetime.Instant
 
