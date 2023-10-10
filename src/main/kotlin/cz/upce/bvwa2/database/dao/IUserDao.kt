@@ -10,4 +10,8 @@ interface IUserDao {
     fun getByNickname(nickName: String): User?
 
     fun add(user: User)
+
+    fun update(user: User)
+
+    fun delete(user: User)
 }

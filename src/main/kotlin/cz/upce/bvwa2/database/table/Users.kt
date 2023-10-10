@@ -7,9 +7,9 @@ object Users : Table() {
     val firstName = varchar("firstname", 20)
     val lastName = varchar("lastname", 20)
     val password = varchar("password", 20)
-    val img = binary("img")
+    val img = varchar("img", 50)
     val role = short("role")
-    val nickName = varchar("nickname", 50)
+    val nickName = varchar("nickname", 50).index(isUnique = true)
 
     override val primaryKey = PrimaryKey(id)
 }

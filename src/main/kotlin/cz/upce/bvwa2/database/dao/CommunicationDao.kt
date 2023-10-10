@@ -44,10 +44,13 @@ class CommunicationDao : ICommunicationDao {
             row[Communications.from],
             row[Communications.to],
             row[Communications.message],
-            row[Communications.time]
+            row[Communications.time],
         )
         communication.id = row[Communications.id]
+        communication.uuid =  row[Communications.uuid]
 
         return communication
     }
 }
+
+val comunicationDao: ICommunicationDao = CommunicationDao()

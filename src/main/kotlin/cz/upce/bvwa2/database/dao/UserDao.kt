@@ -32,7 +32,7 @@ class UserDao : IUserDao {
                 it[Users.firstName] = user.firstName
                 it[Users.lastName] = user.lastName
                 it[Users.password] = user.password
-                it[Users.img] = converter.convertBufferedImageToByteArray(user.img)
+                it[Users.img] = user.img
                 it[Users.role] = user.role
                 it[Users.nickName] = user.nickName
             }
@@ -41,12 +41,20 @@ class UserDao : IUserDao {
         }
     }
 
+    override fun update(user: User) {
+        TODO("Not yet implemented")
+    }
+
+    override fun delete(user: User) {
+        TODO("Not yet implemented")
+    }
+
     private fun mapRowToEntity(row: ResultRow): User {
         val user = User(
             row[Users.firstName],
             row[Users.lastName],
             row[Users.password],
-            converter.byteArrayToBufferedImage(row[Users.img]),
+            row[Users.img],
             row[Users.role],
             row[Users.nickName]
         )

@@ -1,5 +1,6 @@
 package cz.upce.bvwa2.database.dao
 
+import cz.upce.bvwa2.database.model.Communication
 import cz.upce.bvwa2.database.table.Communications
 import cz.upce.bvwa2.database.table.Roles
 import cz.upce.bvwa2.database.table.Users
@@ -7,6 +8,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.Clock
 
 object DataFactory {
     fun init() {

@@ -1,12 +1,10 @@
 package cz.upce.bvwa2.database.model
 
-import java.awt.image.BufferedImage
-
 data class User(
     val firstName: String,
     val lastName: String,
     val password: String,
-    val img: BufferedImage,
+    val img: String,
     var role: Short,
     val nickName: String
 ) {
