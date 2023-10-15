@@ -27,12 +27,15 @@ class UserDao : IUserDao {
     override fun add(user: User) {
         try {
             Users.insert {
-                it[Users.firstName] = user.firstName
-                it[Users.lastName] = user.lastName
-                it[Users.password] = user.password
-                it[Users.img] = user.img
-                it[Users.role] = user.role
-                it[Users.nickName] = user.nickName
+                it[firstName] = user.firstName
+                it[lastName] = user.lastName
+                it[password] = user.password
+                it[img] = user.img
+                it[role] = user.role
+                it[nickName] = user.nickName
+                it[email] = user.email
+                it[sex] = user.sex
+                it[phoneNumber] = user.phoneNumber
             }
         } catch (e: Exception) {
             throw PersistenceException("Chyba při vkládání chyby do databáze", e)
@@ -48,6 +51,9 @@ class UserDao : IUserDao {
                 it[img] = user.img
                 it[role] = user.role
                 it[nickName] = user.nickName
+                it[email] = user.email
+                it[sex] = user.sex
+                it[phoneNumber] = user.phoneNumber
             }
         } catch (e: Exception) {
             throw PersistenceException("Chyba při update user do databáze", e)
@@ -69,7 +75,10 @@ class UserDao : IUserDao {
             row[Users.password],
             row[Users.img],
             row[Users.role],
-            row[Users.nickName]
+            row[Users.nickName],
+            row[Users.email],
+            row[Users.sex],
+            row[Users.phoneNumber],
         )
         user.id = row[Users.id]
 

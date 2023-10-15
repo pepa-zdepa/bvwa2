@@ -10,6 +10,9 @@ object Users : Table() {
     val img = varchar("img", 50)
     val role = short("role")
     val nickName = varchar("nickname", 50).index(isUnique = true)
+    val email = varchar("email", 50)
+    val sex = short("sex")
+    val phoneNumber = varchar("phoneNumber", 20)
 
     override val primaryKey = PrimaryKey(id)
 }
