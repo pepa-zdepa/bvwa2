@@ -22,7 +22,7 @@ function Header({ loggedInUser }) {
   return (
     <header className="bg-purple-500 py-4">
       <nav className="container mx-auto flex items-center justify-between">
-        <div className="text-white text-2xl font-bold">Your Logo</div>
+        <div className="text-white text-2xl font-bold">Cool Logo</div>
         <ul className="space-x-4 flex items-center">
           {/* Home link always visible */}
           <li><Link to="/" className="text-white hover:text-purple-300">Home</Link></li>
