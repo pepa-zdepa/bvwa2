@@ -1,8 +1,7 @@
-package cz.upce.bvwa2
+package cz.upce.bvwa2.repository
 
 import cz.upce.bvwa2.database.dao.sessionDao
 import cz.upce.bvwa2.database.model.Session
-import io.ktor.server.sessions.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class SessionRepo {

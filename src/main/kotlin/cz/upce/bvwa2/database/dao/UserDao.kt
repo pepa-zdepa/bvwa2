@@ -1,13 +1,28 @@
 package cz.upce.bvwa2.database.dao
 
+import cz.upce.bvwa2.config
+import cz.upce.bvwa2.database.Converter
 import cz.upce.bvwa2.database.PersistenceException
 import cz.upce.bvwa2.database.converter
+import cz.upce.bvwa2.database.encryption.Encryption
+import cz.upce.bvwa2.database.encryption.EncryptionFactory.encryption
+import cz.upce.bvwa2.database.encryption.EncryptionFactory.secretKey
+import cz.upce.bvwa2.database.model.Role
+import cz.upce.bvwa2.database.model.Sex
 import cz.upce.bvwa2.database.model.User
 import cz.upce.bvwa2.database.table.Users
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import javax.crypto.SecretKey
+import javax.crypto.spec.SecretKeySpec
+import java.util.Base64
 
-class UserDao : IUserDao {
+class UserDao: IUserDao {
+    private val encodedKey  = config.encryptKey.key
+    private val encryption = Encryption()
+    private val key = encryption.getSecretKeyFromEncodedString(encodedKey)
+
+    private val converter = Converter()
     override fun getAll(): List<User> {
         return Users.selectAll().map(::mapRowToEntity)
     }
@@ -28,8 +43,8 @@ class UserDao : IUserDao {
         try {
             Users.insert {
                 it[firstName] = user.firstName
-                it[lastName] = user.lastName
-                it[password] = user.password
+                it[lastName] = encryption.encrypt(user.lastName, key)
+                it[password] = converter.hashPassword(user.password)
                 it[img] = user.img
                 it[role] = user.role
                 it[nickName] = user.nickName
@@ -47,7 +62,7 @@ class UserDao : IUserDao {
             Users.update({ Users.id eq user.id }) {
                 it[firstName] = user.firstName
                 it[lastName] = user.lastName
-                it[password] = user.password
+                it[password] = converter.hashPassword(user.password)
                 it[img] = user.img
                 it[role] = user.role
                 it[nickName] = user.nickName
@@ -71,7 +86,7 @@ class UserDao : IUserDao {
     private fun mapRowToEntity(row: ResultRow): User {
         val user = User(
             row[Users.firstName],
-            row[Users.lastName],
+            encryption.decrypt(row[Users.lastName], key),
             row[Users.password],
             row[Users.img],
             row[Users.role],
@@ -84,7 +99,4 @@ class UserDao : IUserDao {
 
         return user
     }
-
 }
-
-val userDao: IUserDao = UserDao()

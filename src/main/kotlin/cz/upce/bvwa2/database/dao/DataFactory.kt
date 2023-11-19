@@ -1,12 +1,9 @@
 package cz.upce.bvwa2.database.dao
 
-import cz.upce.bvwa2.database.model.Communication
 import cz.upce.bvwa2.database.table.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.time.Clock
 
 object DataFactory {
     fun init() {
@@ -20,7 +17,7 @@ object DataFactory {
             SchemaUtils.create(Roles)
             SchemaUtils.create(Sessions)
             SchemaUtils.create(Sexs)
-            Roles.insert {
+/*            Roles.insert {
                 it[roleName] = "ADMIN"
             }
             Roles.insert {
@@ -31,7 +28,7 @@ object DataFactory {
             }
             Sexs.insert {
                 it[sexName] = "FEMALE"
-            }
+            }*/
         }
     }
 }
