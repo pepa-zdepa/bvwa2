@@ -5,14 +5,15 @@ import InputValidator from './InputValidator'; // Import the utility
 function Register() {
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState({
+    email: '',
+    password: '',
     firstName: '',
     lastName: '',
-    email: '',
-    phoneNumber: '',
-    password: '',
+    phoneNumber: '',    
     confirmPassword: '',
     dateOfBirth: null,
     profilePicture: null,
+    isAdmin: false,
   });
 
   const [passwordError, setPasswordError] = useState(null);
@@ -48,8 +49,9 @@ function Register() {
 
     if (!isUserExists) {
       storedUsers.push(userProfile);
-      localStorage.setItem('registeredUsers', JSON.stringify(storedUsers));
+      localStorage.setItem('registeredUsers', JSON.stringify(storedUsers));    
       navigate('/'); // Redirect to home/login page after registration
+      window.location.reload();
     } else {
       // Display error if user already exists
       alert('User with this email already exists. Please log in.');

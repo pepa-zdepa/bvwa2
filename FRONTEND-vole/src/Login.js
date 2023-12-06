@@ -21,27 +21,24 @@ function Login() {
 
     // Get stored users data
     const storedUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
-
+  
     // Check login credentials
     const foundUser = storedUsers.find(
       (user) => user.email === loginData.email && user.password === loginData.password
     );
-
+  
     if (foundUser) {
       // Successful login
       setLoginError(null);
       localStorage.setItem('loggedInUser', JSON.stringify(foundUser));
-      
       console.log('Login successful for user:', loginData.email);
-      
-      navigate('/profile');
+      navigate('/');
       window.location.reload();
-      
     } else {
       // Invalid credentials
       setLoginError('Invalid email or password');
     }
-  };
+};
 
   return (
     <form onSubmit={handleLoginSubmit}>
