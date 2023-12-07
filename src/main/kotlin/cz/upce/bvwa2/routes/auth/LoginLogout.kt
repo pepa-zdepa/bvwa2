@@ -7,3 +7,6 @@ class Login
 
 @Resource("/logout")
 class Logout
+
+@Resource("/refresh")
+class Refresh
