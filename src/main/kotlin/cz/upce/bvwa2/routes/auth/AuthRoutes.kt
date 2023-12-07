@@ -2,6 +2,7 @@ package cz.upce.bvwa2.routes.auth
 
 import cz.upce.bvwa2.auth.UserPrincipal
 import io.ktor.http.*
+import io.ktor.resources.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.resources.post
@@ -10,6 +11,15 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
+
+@Resource("/login")
+class Login
+
+@Resource("/logout")
+class Logout
+
+@Resource("/refresh")
+class Refresh
 
 fun Route.authRoutes() {
     val sessionStorage by closestDI().instance<SessionStorage>()

@@ -15,6 +15,7 @@ import org.kodein.di.ktor.closestDI
 
 data class UserPrincipal(
     val userId: Long, // TODO get from DB
+    val username: String,
     val remoteHost: String,
     val expiration: Long,
     val roles: Set<String> = setOf("user"),
@@ -48,7 +49,7 @@ fun Application.configureAuth() {
             validate {credentials ->
                 // TODO get data from DB
                 if (credentials.name == "user" && credentials.password == "pass") {
-                    UserPrincipal(0, request.origin.remoteHost, getExpiration())
+                    UserPrincipal(0, "user", request.origin.remoteHost, getExpiration())
                 } else {
                     null
                 }

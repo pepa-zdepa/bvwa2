@@ -91,7 +91,6 @@ fun Application.module() {
                     sessionRepository.getById(id)?.data ?: throw NoSuchElementException("Session $id not found")
 
                 override suspend fun write(id: String, value: String) = sessionRepository.add(id, value)
-
             }
         }
     }

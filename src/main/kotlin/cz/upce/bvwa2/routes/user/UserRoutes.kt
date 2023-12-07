@@ -5,12 +5,22 @@ import cz.upce.bvwa2.models.CreateUserRequest
 import cz.upce.bvwa2.models.UpdateUserRequest
 import cz.upce.bvwa2.repository.UserRepository
 import io.ktor.http.*
+import io.ktor.resources.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
+
+@Resource("/user")
+class User {
+    @Resource("/messages")
+    class Messages(val parent: User = User()) {
+        @Resource("/{messageId}")
+        class ById(val parent: Messages = Messages(), val messageId: String)
+    }
+}
 
 fun Route.userRoutes() {
     val userRepository by closestDI().instance<UserRepository>()
