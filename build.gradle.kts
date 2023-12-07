@@ -63,7 +63,7 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
-    implementation("io.ktor:ktor-network-tls-certificates:$ktor_version")
+    implementation("io.ktor:ktor-network-tls-certificates-jvm:2.3.6")
     implementation("io.ktor:ktor-server-http-redirect:$ktor_version")
 
     // Auth
@@ -71,6 +71,7 @@ dependencies {
 
     //Pass encrypt
     implementation("org.mindrot:jbcrypt:0.4")
+    implementation("org.sqids:sqids_3:0.5.0")
 
     // Database
     implementation("com.h2database:h2:$h2_version")
@@ -85,7 +86,7 @@ dependencies {
     // Hoplite
     implementation("com.sksamuel.hoplite:hoplite-core:$hoplite_version")
     implementation("com.sksamuel.hoplite:hoplite-hocon:$hoplite_version")
-    implementation("io.ktor:ktor-server-http-redirect-jvm:2.3.4")
+    implementation("io.ktor:ktor-server-http-redirect-jvm:2.3.6")
 
     // Tests
     testImplementation(kotlin("test"))
