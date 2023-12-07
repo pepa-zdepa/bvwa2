@@ -4,11 +4,13 @@ import com.sksamuel.hoplite.*
 import com.sksamuel.hoplite.sources.SystemPropertiesPropertySource
 import cz.upce.bvwa2.auth.configureAuth
 import cz.upce.bvwa2.database.Converter
-import cz.upce.bvwa2.plugins.configurePlugins
-import cz.upce.bvwa2.routes.configureRoutes
 import cz.upce.bvwa2.database.dao.*
 import cz.upce.bvwa2.database.encryption.Encryption
-import cz.upce.bvwa2.repository.*
+import cz.upce.bvwa2.plugins.configurePlugins
+import cz.upce.bvwa2.repository.SessionRepository
+import cz.upce.bvwa2.repository.UserRepository
+import cz.upce.bvwa2.routes.configureRoutes
+import cz.upce.bvwa2.utils.IdConverter
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -51,8 +53,8 @@ fun main() {
             keyAlias = appConfig.server.ssl.keyAlias,
             keyStorePassword = { appConfig.server.ssl.keyStorePassword.toCharArray() },
             privateKeyPassword = { appConfig.server.ssl.privateKeyPassword.toCharArray() }) {
-                port = appConfig.server.ssl.port
-                keyStorePath = appConfig.server.ssl.keyStorePath
+            port = appConfig.server.ssl.port
+            keyStorePath = appConfig.server.ssl.keyStorePath
         }
         module(Application::module)
     }
@@ -68,6 +70,7 @@ fun Application.module() {
 
         bindProviderOf(::Converter)
         bindProviderOf(::Encryption)
+        bindSingleton<IdConverter> { IdConverter(instance<Config>().security.sqidsAlphabet) }
 
         bindProvider<IGenderDao> { new(::GenderDao) }
         bindProvider<ICommunicationDao> { new(::CommunicationDao) }
@@ -84,7 +87,8 @@ fun Application.module() {
 
                 override suspend fun invalidate(id: String) = sessionRepository.delete(id)
 
-                override suspend fun read(id: String) = sessionRepository.getById(id)?.data ?: throw NoSuchElementException("Session $id not found")
+                override suspend fun read(id: String) =
+                    sessionRepository.getById(id)?.data ?: throw NoSuchElementException("Session $id not found")
 
                 override suspend fun write(id: String, value: String) = sessionRepository.add(id, value)
 

@@ -10,12 +10,14 @@ import cz.upce.bvwa2.database.model.User
 import cz.upce.bvwa2.models.CreateUserRequest
 import cz.upce.bvwa2.models.UpdateUserRequest
 import cz.upce.bvwa2.models.UserResponse
+import cz.upce.bvwa2.utils.IdConverter
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserRepository(
     private val userDao: IUserDao,
     private val roleDao: IRoleDao,
     private val genderDao: IGenderDao,
+    private val idConverter: IdConverter
 ) {
     fun add(createUserRequest: CreateUserRequest) = transaction {
         val user = userDao.getByNickname(createUserRequest.user)

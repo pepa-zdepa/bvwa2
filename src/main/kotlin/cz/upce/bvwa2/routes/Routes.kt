@@ -14,10 +14,6 @@ fun Application.configureRoutes() {
         authRoutes()
         userRoutes()
 
-        get("/login") {
-            call.respondText("/login")
-        }
-
         authenticate("session") {
             withRole("user") {
                 get("/index") {
