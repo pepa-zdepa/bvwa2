@@ -9,9 +9,12 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.kodein.di.instance
+import org.kodein.di.ktor.closestDI
 
 fun Route.userRoutes() {
-    val userRepository = UserRepository()
+    val userRepository by closestDI().instance<UserRepository>()
+
     route("/user") {
         get("/{userId}") {
             val userId = call.parameters["userId"]?.toLongOrNull()

@@ -73,7 +73,7 @@ dependencies {
 
     //Pass encrypt
     implementation("org.mindrot:jbcrypt:0.4")
-    implementation("org.sqids:sqids_3:0.5.0")
+    implementation("org.sqids:sqids:0.1.0")
 
     // Database
     implementation("com.h2database:h2:$h2_version")
@@ -101,7 +101,7 @@ tasks.test {
     outputs.upToDateWhen { false }
 }
 
-tasks.classes {
+tasks.compileKotlin {
     dependsOn(generateSslCertificate)
 }
 

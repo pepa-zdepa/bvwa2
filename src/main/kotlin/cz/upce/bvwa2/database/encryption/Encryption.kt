@@ -1,5 +1,6 @@
 package cz.upce.bvwa2.database.encryption
 
+import cz.upce.bvwa2.Config
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.security.KeyStore
@@ -9,7 +10,9 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 
-class Encryption {
+class Encryption(config: Config) {
+
+    private val secretKey: SecretKey = getSecretKeyFromEncodedString(config.security.databaseEncryptKey)
 
     fun generateSecretKey(): SecretKey {
         val keyGenerator = KeyGenerator.getInstance("AES")
@@ -22,14 +25,14 @@ class Encryption {
         return SecretKeySpec(decodedKey, "AES")
     }
 
-    fun encrypt(data: String, secretKey: SecretKey): String {
+    fun encrypt(data: String): String {
         val cipher = Cipher.getInstance("AES")
         cipher.init(Cipher.ENCRYPT_MODE, secretKey)
         val encrypted = cipher.doFinal(data.toByteArray())
         return Base64.getEncoder().encodeToString(encrypted)
     }
 
-    fun decrypt(data: String, secretKey: SecretKey): String {
+    fun decrypt(data: String): String {
         val cipher = Cipher.getInstance("AES")
         cipher.init(Cipher.DECRYPT_MODE, secretKey)
         val decodedData = Base64.getDecoder().decode(data)

@@ -51,5 +51,3 @@ class CommunicationDao : ICommunicationDao {
         return communication
     }
 }
-
-val comunicationDao: ICommunicationDao = CommunicationDao()

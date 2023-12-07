@@ -1,12 +1,8 @@
 package cz.upce.bvwa2.database.dao
 
-import cz.upce.bvwa2.database.converter
 import cz.upce.bvwa2.database.model.Role
-import cz.upce.bvwa2.database.model.User
 import cz.upce.bvwa2.database.table.Roles
-import cz.upce.bvwa2.database.table.Users
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 
@@ -25,5 +21,4 @@ class RoleDao : IRoleDao {
     private fun mapRowToEntity(row: ResultRow): Role {
         return Role.valueOf(row[Roles.roleName])
     }
-
 }

@@ -44,5 +44,3 @@ class SessionDao : ISessionDao {
         return session
     }
 }
-
-val sessionDao: ISessionDao = SessionDao()

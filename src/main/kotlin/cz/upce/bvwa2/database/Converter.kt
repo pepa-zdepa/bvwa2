@@ -31,5 +31,3 @@ class Converter {
         return BCrypt.checkpw(candidate, hashed)
     }
 }
-
-val converter = Converter()

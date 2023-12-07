@@ -1,28 +1,17 @@
 package cz.upce.bvwa2.database.dao
 
-import cz.upce.bvwa2.config
 import cz.upce.bvwa2.database.Converter
 import cz.upce.bvwa2.database.PersistenceException
-import cz.upce.bvwa2.database.converter
 import cz.upce.bvwa2.database.encryption.Encryption
-import cz.upce.bvwa2.database.encryption.EncryptionFactory.encryption
-import cz.upce.bvwa2.database.encryption.EncryptionFactory.secretKey
-import cz.upce.bvwa2.database.model.Role
-import cz.upce.bvwa2.database.model.Gender
 import cz.upce.bvwa2.database.model.User
 import cz.upce.bvwa2.database.table.Users
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import javax.crypto.SecretKey
-import javax.crypto.spec.SecretKeySpec
-import java.util.Base64
 
-class UserDao: IUserDao {
-    private val encodedKey  = config.encryptKey.key
-    private val encryption = Encryption()
-    private val key = encryption.getSecretKeyFromEncodedString(encodedKey)
-
-    private val converter = Converter()
+class UserDao(
+    private val encryption: Encryption,
+    private val converter: Converter,
+): IUserDao {
     override fun getAll(): List<User> {
         return Users.selectAll().map(::mapRowToEntity)
     }
@@ -41,18 +30,18 @@ class UserDao: IUserDao {
 
     override fun add(user: User) {
         println("PEPA")
-        println(key)
+//        println(key)
         try {
             Users.insert {
-                it[firstName] = encryption.encrypt(user.firstName, key)
-                it[lastName] = encryption.encrypt(user.lastName, key)
+                it[firstName] = encryption.encrypt(user.firstName)
+                it[lastName] = encryption.encrypt(user.lastName)
                 it[password] = converter.hashPassword(user.password)
                 it[img] = user.img
                 it[role] = user.role
                 it[nickName] = user.nickName
-                it[email] = encryption.encrypt(user.email, key)
+                it[email] = encryption.encrypt(user.email)
                 it[gender] = user.gender
-                it[phoneNumber] = encryption.encrypt(user.phoneNumber, key)
+                it[phoneNumber] = encryption.encrypt(user.phoneNumber)
             }
         } catch (e: Exception) {
             throw PersistenceException("Chyba při vkládání chyby do databáze", e)
@@ -62,14 +51,14 @@ class UserDao: IUserDao {
     override fun update(user: User) {
         try {
             Users.update({ Users.id eq user.id }) {
-                it[firstName] = encryption.encrypt(user.firstName, key)
-                it[lastName] = encryption.encrypt(user.lastName, key)
+                it[firstName] = encryption.encrypt(user.firstName)
+                it[lastName] = encryption.encrypt(user.lastName)
                 it[img] = user.img
                 it[role] = user.role
                 it[nickName] = user.nickName
-                it[email] = encryption.encrypt(user.email, key)
+                it[email] = encryption.encrypt(user.email)
                 it[gender] = user.gender
-                it[phoneNumber] = encryption.encrypt(user.phoneNumber, key)
+                it[phoneNumber] = encryption.encrypt(user.phoneNumber)
             }
         } catch (e: Exception) {
             throw PersistenceException("Chyba při update user do databáze", e)
@@ -86,15 +75,15 @@ class UserDao: IUserDao {
 
     private fun mapRowToEntity(row: ResultRow): User {
         val user = User(
-            encryption.decrypt(row[Users.firstName], key),
-            encryption.decrypt(row[Users.lastName], key),
+            encryption.decrypt(row[Users.firstName]),
+            encryption.decrypt(row[Users.lastName]),
             row[Users.password],
             row[Users.img],
             row[Users.role],
             row[Users.nickName],
-            encryption.decrypt(row[Users.email], key),
+            encryption.decrypt(row[Users.email]),
             row[Users.gender],
-            encryption.decrypt(row[Users.phoneNumber], key),
+            encryption.decrypt(row[Users.phoneNumber]),
         )
         user.id = row[Users.id]
 
