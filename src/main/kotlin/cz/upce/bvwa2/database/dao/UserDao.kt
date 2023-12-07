@@ -1,13 +1,28 @@
 package cz.upce.bvwa2.database.dao
 
+import cz.upce.bvwa2.config
+import cz.upce.bvwa2.database.Converter
 import cz.upce.bvwa2.database.PersistenceException
 import cz.upce.bvwa2.database.converter
+import cz.upce.bvwa2.database.encryption.Encryption
+import cz.upce.bvwa2.database.encryption.EncryptionFactory.encryption
+import cz.upce.bvwa2.database.encryption.EncryptionFactory.secretKey
+import cz.upce.bvwa2.database.model.Role
+import cz.upce.bvwa2.database.model.Sex
 import cz.upce.bvwa2.database.model.User
 import cz.upce.bvwa2.database.table.Users
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import javax.crypto.SecretKey
+import javax.crypto.spec.SecretKeySpec
+import java.util.Base64
 
-class UserDao : IUserDao {
+class UserDao: IUserDao {
+    private val encodedKey  = config.encryptKey.key
+    private val encryption = Encryption()
+    private val key = encryption.getSecretKeyFromEncodedString(encodedKey)
+
+    private val converter = Converter()
     override fun getAll(): List<User> {
         return Users.selectAll().map(::mapRowToEntity)
     }
@@ -25,14 +40,19 @@ class UserDao : IUserDao {
     }
 
     override fun add(user: User) {
+        println("PEPA")
+        println(key)
         try {
             Users.insert {
-                it[Users.firstName] = user.firstName
-                it[Users.lastName] = user.lastName
-                it[Users.password] = user.password
-                it[Users.img] = user.img
-                it[Users.role] = user.role
-                it[Users.nickName] = user.nickName
+                it[firstName] = encryption.encrypt(user.firstName, key)
+                it[lastName] = encryption.encrypt(user.lastName, key)
+                it[password] = converter.hashPassword(user.password)
+                it[img] = user.img
+                it[role] = user.role
+                it[nickName] = user.nickName
+                it[email] = encryption.encrypt(user.email, key)
+                it[sex] = user.sex
+                it[phoneNumber] = encryption.encrypt(user.phoneNumber, key)
             }
         } catch (e: Exception) {
             throw PersistenceException("Chyba při vkládání chyby do databáze", e)
@@ -42,12 +62,14 @@ class UserDao : IUserDao {
     override fun update(user: User) {
         try {
             Users.update({ Users.id eq user.id }) {
-                it[firstName] = user.firstName
-                it[lastName] = user.lastName
-                it[password] = user.password
+                it[firstName] = encryption.encrypt(user.firstName, key)
+                it[lastName] = encryption.encrypt(user.lastName, key)
                 it[img] = user.img
                 it[role] = user.role
                 it[nickName] = user.nickName
+                it[email] = encryption.encrypt(user.email, key)
+                it[sex] = user.sex
+                it[phoneNumber] = encryption.encrypt(user.phoneNumber, key)
             }
         } catch (e: Exception) {
             throw PersistenceException("Chyba při update user do databáze", e)
@@ -64,18 +86,18 @@ class UserDao : IUserDao {
 
     private fun mapRowToEntity(row: ResultRow): User {
         val user = User(
-            row[Users.firstName],
-            row[Users.lastName],
+            encryption.decrypt(row[Users.firstName], key),
+            encryption.decrypt(row[Users.lastName], key),
             row[Users.password],
             row[Users.img],
             row[Users.role],
-            row[Users.nickName]
+            row[Users.nickName],
+            encryption.decrypt(row[Users.email], key),
+            row[Users.sex],
+            encryption.decrypt(row[Users.phoneNumber], key),
         )
         user.id = row[Users.id]
 
         return user
     }
-
 }
-
-val userDao: IUserDao = UserDao()

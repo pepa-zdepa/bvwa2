@@ -8,6 +8,7 @@ data class Config(
     val development: Boolean,
     val server: Server,
     val auth: Auth,
+    val encryptKey: EncryptKey,
 ) {
     data class Server(
         val port: Int,
@@ -30,6 +31,11 @@ data class Config(
             val expirationInSeconds: Long,
         )
     }
+
+    data class EncryptKey(
+        val key: String,
+    )
+
 }
 
 private val overrideConfig: String? = System.getProperty("config", null)
