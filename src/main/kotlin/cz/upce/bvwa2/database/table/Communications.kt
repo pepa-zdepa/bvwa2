@@ -10,7 +10,6 @@ object Communications : Table() {
     val to = long("to")
     val message = varchar("message", 255)
     val time = timestamp("time")
-    val uuid = uuid("pepa").autoGenerate().index(isUnique = true)
 
     override val primaryKey = PrimaryKey(id)
 }

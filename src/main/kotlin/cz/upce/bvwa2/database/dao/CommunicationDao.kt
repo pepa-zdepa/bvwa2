@@ -47,7 +47,6 @@ class CommunicationDao : ICommunicationDao {
             row[Communications.time],
         )
         communication.id = row[Communications.id]
-        communication.uuid =  row[Communications.uuid]
 
         return communication
     }
