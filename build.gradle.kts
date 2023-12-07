@@ -19,9 +19,9 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "1.9.10"
+    kotlin("jvm") version "1.9.20"
     id("io.ktor.plugin") version "2.3.4"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20"
 }
 
 group = "cz.upce.bvwa2"
@@ -65,6 +65,10 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
     implementation("io.ktor:ktor-network-tls-certificates-jvm:2.3.6")
     implementation("io.ktor:ktor-server-http-redirect:$ktor_version")
+
+    // DI
+    implementation("org.kodein.di:kodein-di:7.19.0")
+    implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:7.19.0")
 
     // Auth
     implementation("com.github.omkar-tenkale:ktor-role-based-auth:0.2.0")
