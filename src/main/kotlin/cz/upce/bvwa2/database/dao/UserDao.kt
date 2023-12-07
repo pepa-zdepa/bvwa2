@@ -40,17 +40,19 @@ class UserDao: IUserDao {
     }
 
     override fun add(user: User) {
+        println("PEPA")
+        println(key)
         try {
             Users.insert {
-                it[firstName] = user.firstName
+                it[firstName] = encryption.encrypt(user.firstName, key)
                 it[lastName] = encryption.encrypt(user.lastName, key)
                 it[password] = converter.hashPassword(user.password)
                 it[img] = user.img
                 it[role] = user.role
                 it[nickName] = user.nickName
-                it[email] = user.email
+                it[email] = encryption.encrypt(user.email, key)
                 it[sex] = user.sex
-                it[phoneNumber] = user.phoneNumber
+                it[phoneNumber] = encryption.encrypt(user.phoneNumber, key)
             }
         } catch (e: Exception) {
             throw PersistenceException("Chyba při vkládání chyby do databáze", e)
@@ -60,15 +62,14 @@ class UserDao: IUserDao {
     override fun update(user: User) {
         try {
             Users.update({ Users.id eq user.id }) {
-                it[firstName] = user.firstName
-                it[lastName] = user.lastName
-                it[password] = converter.hashPassword(user.password)
+                it[firstName] = encryption.encrypt(user.firstName, key)
+                it[lastName] = encryption.encrypt(user.lastName, key)
                 it[img] = user.img
                 it[role] = user.role
                 it[nickName] = user.nickName
-                it[email] = user.email
+                it[email] = encryption.encrypt(user.email, key)
                 it[sex] = user.sex
-                it[phoneNumber] = user.phoneNumber
+                it[phoneNumber] = encryption.encrypt(user.phoneNumber, key)
             }
         } catch (e: Exception) {
             throw PersistenceException("Chyba při update user do databáze", e)
@@ -85,15 +86,15 @@ class UserDao: IUserDao {
 
     private fun mapRowToEntity(row: ResultRow): User {
         val user = User(
-            row[Users.firstName],
+            encryption.decrypt(row[Users.firstName], key),
             encryption.decrypt(row[Users.lastName], key),
             row[Users.password],
             row[Users.img],
             row[Users.role],
             row[Users.nickName],
-            row[Users.email],
+            encryption.decrypt(row[Users.email], key),
             row[Users.sex],
-            row[Users.phoneNumber],
+            encryption.decrypt(row[Users.phoneNumber], key),
         )
         user.id = row[Users.id]
 

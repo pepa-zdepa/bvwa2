@@ -2,6 +2,7 @@ package cz.upce.bvwa2.routes.user
 
 import cz.upce.bvwa2.database.PersistenceException
 import cz.upce.bvwa2.models.CreateUserRequest
+import cz.upce.bvwa2.models.UpdateUserRequest
 import cz.upce.bvwa2.repository.UserRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -30,11 +31,32 @@ fun Route.userRoutes() {
             userRepository.add(requestUser)
             call.respond(HttpStatusCode.OK)
         }
-        put {
-            // Code to update a user
+        put("/{userId}") {
+            val userId = call.parameters["userId"]?.toLongOrNull()
+            val requestUser = call.receive<UpdateUserRequest>()
+            if (userId == null) {
+                call.respond(HttpStatusCode.BadRequest, "Invalid user ID.")
+            } else {
+                try {
+                    userRepository.update(userId, requestUser)
+                    call.respond(HttpStatusCode.OK)
+                } catch (e: PersistenceException) {
+                    call.respond(HttpStatusCode.NotFound, e.message ?: "User not found.")
+                }
+            }
         }
-        delete {
-            // Code to delete a user
+        delete("/{userId}") {
+            val userId = call.parameters["userId"]?.toLongOrNull()
+            if (userId == null) {
+                call.respond(HttpStatusCode.BadRequest, "Invalid user ID.")
+            } else {
+                try {
+                    val userResponse = userRepository.delete(userId)
+                    call.respond(userResponse)
+                } catch (e: PersistenceException) {
+                    call.respond(HttpStatusCode.NotFound, e.message ?: "User not found.")
+                }
+            }
         }
     }
 

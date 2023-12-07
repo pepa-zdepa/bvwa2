@@ -1,6 +1,7 @@
 package cz.upce.bvwa2.database.model
 
 import cz.upce.bvwa2.models.CreateUserRequest
+import cz.upce.bvwa2.models.UpdateUserRequest
 import cz.upce.bvwa2.models.UserResponse
 
 data class User(
@@ -29,6 +30,32 @@ data class User(
                 sex = sexId,
                 phoneNumber = requestUser.phone
             )
+        }
+
+        fun fromRequestUp(requestUser: UpdateUserRequest, roleId: Short, sexId: Short): User? {
+            return requestUser.firstName?.let {
+                requestUser.lastName?.let { it1 ->
+                    requestUser.photo?.let { it2 ->
+                        requestUser.user?.let { it3 ->
+                            requestUser.email?.let { it4 ->
+                                requestUser.phone?.let { it5 ->
+                                    User(
+                                        firstName = it,
+                                        lastName = it1,
+                                        img = it2,
+                                        role = roleId,
+                                        nickName = it3,
+                                        email = it4,
+                                        sex = sexId,
+                                        phoneNumber = it5,
+                                        password = "pepa"
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         fun toRequest(user: User, role: String, gender: String): UserResponse {

@@ -7,6 +7,7 @@ import cz.upce.bvwa2.database.model.Role
 import cz.upce.bvwa2.database.model.Sex
 import cz.upce.bvwa2.database.model.User
 import cz.upce.bvwa2.models.CreateUserRequest
+import cz.upce.bvwa2.models.UpdateUserRequest
 import cz.upce.bvwa2.models.UserResponse
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -25,7 +26,7 @@ class UserRepository {
         if (user == null) {
                 userDao.add(User.fromRequest(createUserRequest, roleId, sexId))
         } else {
-            throw PersistenceException("user jiz existuje")
+            throw PersistenceException("uživatel jiz existuje")
         }
     }
 
@@ -36,12 +37,32 @@ class UserRepository {
             val gender = Sex.valueOf(sexDao.getById(user.sex.toLong()).toString()).toString()
             User.toRequest(user, role, gender)
         } else {
-            throw PersistenceException("user s tímto id neexistuje")
+            throw PersistenceException("uživatel s tímto id neexistuje")
         }
     }
 
-    fun update(userId: Long, createUserRequest: CreateUserRequest) = transaction {
+    fun update(userId: Long, createUserRequest: UpdateUserRequest) = transaction {
+        val userById = userDao.getById(userId)
+        val userByNickname = createUserRequest.user?.let { userDao.getByNickname(it) }
+        if (userById != null && userByNickname != null) {
+            val roleId: Short = 2
+            val sexId: Short = when(createUserRequest.gender?.let { Sex.valueOf(it.uppercase()) }) {
+                Sex.MALE -> 1
+                else -> 2
+            }
+            User.fromRequestUp(createUserRequest, roleId, sexId)?.let { userDao.update(it) }
+        } else {
+            throw PersistenceException("uživatel s tímto id neexistuje")
+        }
+    }
 
+    fun delete(userId: Long) = transaction {
+        val user = userDao.getById(userId)
+        if (user != null) {
+            userDao.delete(userId)
+        } else {
+            throw PersistenceException("uživatel s tímto id neexistuje")
+        }
     }
 
 }
