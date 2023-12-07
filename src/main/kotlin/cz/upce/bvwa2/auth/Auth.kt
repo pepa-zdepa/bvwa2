@@ -1,6 +1,6 @@
 package cz.upce.bvwa2.auth
 
-import cz.upce.bvwa2.SessionRepo
+import cz.upce.bvwa2.repository.SessionRepo
 import cz.upce.bvwa2.config
 import io.github.omkartenkale.ktor_role_based_auth.roleBased
 import io.ktor.http.*
