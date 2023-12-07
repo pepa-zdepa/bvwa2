@@ -14,23 +14,23 @@ object DataFactory {
         val database = Database.connect(jdbcURL, driverClassName)
 
         transaction(database) {
-/*            SchemaUtils.create(Communications)
+            SchemaUtils.create(Communications)
             SchemaUtils.create(Users)
             SchemaUtils.create(Roles)
             SchemaUtils.create(Sessions)
-            SchemaUtils.create(Sexs)
+            SchemaUtils.create(Genders)
             Roles.insert {
                 it[roleName] = "ADMIN"
             }
             Roles.insert {
                 it[roleName] = "USER"
             }
-            Sexs.insert {
-                it[sexName] = "MALE"
+            Genders.insert {
+                it[genderName] = "MALE"
             }
-            Sexs.insert {
-                it[sexName] = "FEMALE"
-            }*/
+            Genders.insert {
+                it[genderName] = "FEMALE"
+            }
         }
     }
 }

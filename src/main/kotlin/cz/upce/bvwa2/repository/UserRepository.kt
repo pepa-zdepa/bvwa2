@@ -2,9 +2,8 @@ package cz.upce.bvwa2.repository
 
 import cz.upce.bvwa2.database.PersistenceException
 import cz.upce.bvwa2.database.dao.*
-import cz.upce.bvwa2.database.encryption.Encryption
 import cz.upce.bvwa2.database.model.Role
-import cz.upce.bvwa2.database.model.Sex
+import cz.upce.bvwa2.database.model.Gender
 import cz.upce.bvwa2.database.model.User
 import cz.upce.bvwa2.models.CreateUserRequest
 import cz.upce.bvwa2.models.UpdateUserRequest
@@ -15,12 +14,12 @@ class UserRepository {
 
     val userDao: IUserDao = UserDao()
     val roleDao: IRoleDao = RoleDao()
-    val sexDao: ISexDao = SexDao()
+    val sexDao: IGenderDao = GenderDao()
     fun add(createUserRequest: CreateUserRequest) = transaction{
         val user = userDao.getByNickname(createUserRequest.user)
         val roleId: Short = 2
-        val sexId: Short = when(Sex.valueOf(createUserRequest.gender.uppercase())) {
-            Sex.MALE -> 1
+        val sexId: Short = when(Gender.valueOf(createUserRequest.gender.uppercase())) {
+            Gender.MALE -> 1
             else -> 2
         }
         if (user == null) {
@@ -34,7 +33,7 @@ class UserRepository {
         val user = userDao.getById(userId)
         if (user != null) {
             val role = Role.valueOf(roleDao.getById(user.role.toLong()).toString()).toString()
-            val gender = Sex.valueOf(sexDao.getById(user.sex.toLong()).toString()).toString()
+            val gender = Gender.valueOf(sexDao.getById(user.gender.toLong()).toString()).toString()
             User.toRequest(user, role, gender)
         } else {
             throw PersistenceException("uživatel s tímto id neexistuje")
@@ -46,8 +45,8 @@ class UserRepository {
         val userByNickname = createUserRequest.user?.let { userDao.getByNickname(it) }
         if (userById != null && userByNickname != null) {
             val roleId: Short = 2
-            val sexId: Short = when(createUserRequest.gender?.let { Sex.valueOf(it.uppercase()) }) {
-                Sex.MALE -> 1
+            val sexId: Short = when(createUserRequest.gender?.let { Gender.valueOf(it.uppercase()) }) {
+                Gender.MALE -> 1
                 else -> 2
             }
             User.fromRequestUp(createUserRequest, roleId, sexId)?.let { userDao.update(it) }

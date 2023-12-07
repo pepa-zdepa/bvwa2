@@ -8,7 +8,7 @@ import cz.upce.bvwa2.database.encryption.Encryption
 import cz.upce.bvwa2.database.encryption.EncryptionFactory.encryption
 import cz.upce.bvwa2.database.encryption.EncryptionFactory.secretKey
 import cz.upce.bvwa2.database.model.Role
-import cz.upce.bvwa2.database.model.Sex
+import cz.upce.bvwa2.database.model.Gender
 import cz.upce.bvwa2.database.model.User
 import cz.upce.bvwa2.database.table.Users
 import org.jetbrains.exposed.sql.*
@@ -51,7 +51,7 @@ class UserDao: IUserDao {
                 it[role] = user.role
                 it[nickName] = user.nickName
                 it[email] = encryption.encrypt(user.email, key)
-                it[sex] = user.sex
+                it[gender] = user.gender
                 it[phoneNumber] = encryption.encrypt(user.phoneNumber, key)
             }
         } catch (e: Exception) {
@@ -68,7 +68,7 @@ class UserDao: IUserDao {
                 it[role] = user.role
                 it[nickName] = user.nickName
                 it[email] = encryption.encrypt(user.email, key)
-                it[sex] = user.sex
+                it[gender] = user.gender
                 it[phoneNumber] = encryption.encrypt(user.phoneNumber, key)
             }
         } catch (e: Exception) {
@@ -93,7 +93,7 @@ class UserDao: IUserDao {
             row[Users.role],
             row[Users.nickName],
             encryption.decrypt(row[Users.email], key),
-            row[Users.sex],
+            row[Users.gender],
             encryption.decrypt(row[Users.phoneNumber], key),
         )
         user.id = row[Users.id]

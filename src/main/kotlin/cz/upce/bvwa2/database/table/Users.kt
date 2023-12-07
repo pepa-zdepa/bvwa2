@@ -11,7 +11,7 @@ object Users : Table() {
     val role = short("role")
     val nickName = varchar("nickname", 50).index(isUnique = true)
     val email = varchar("email", 100)
-    val sex = short("sex")
+    val gender = short("gender")
     val phoneNumber = varchar("phoneNumber", 100)
 
     override val primaryKey = PrimaryKey(id)

@@ -12,13 +12,13 @@ data class User(
     var role: Short,
     val nickName: String,
     val email: String,
-    val sex: Short,
+    val gender: Short,
     val phoneNumber: String
 ) {
     var id: Long = 0
 
     companion object {
-        fun fromRequest(requestUser: CreateUserRequest, roleId: Short, sexId: Short): User {
+        fun fromRequest(requestUser: CreateUserRequest, roleId: Short, genderId: Short): User {
             return User(
                 firstName = requestUser.firstName,
                 lastName = requestUser.lastName,
@@ -27,12 +27,12 @@ data class User(
                 role = roleId,
                 nickName = requestUser.user,
                 email = requestUser.email,
-                sex = sexId,
+                gender = genderId,
                 phoneNumber = requestUser.phone
             )
         }
 
-        fun fromRequestUp(requestUser: UpdateUserRequest, roleId: Short, sexId: Short): User? {
+        fun fromRequestUp(requestUser: UpdateUserRequest, roleId: Short, genderId: Short): User? {
             return requestUser.firstName?.let {
                 requestUser.lastName?.let { it1 ->
                     requestUser.photo?.let { it2 ->
@@ -46,7 +46,7 @@ data class User(
                                         role = roleId,
                                         nickName = it3,
                                         email = it4,
-                                        sex = sexId,
+                                        gender = genderId,
                                         phoneNumber = it5,
                                         password = "pepa"
                                     )
@@ -66,7 +66,7 @@ data class User(
                 photo = user.img,
                 phone = user.phoneNumber,
                 role = Role.valueOf(role).toString(),
-                gender = Sex.valueOf(gender).toString(),
+                gender = Gender.valueOf(gender).toString(),
                 user = user.nickName
             )
         }
