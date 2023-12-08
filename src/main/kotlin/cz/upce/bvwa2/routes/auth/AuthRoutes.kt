@@ -37,7 +37,7 @@ fun Route.authRoutes() {
         post<Auth.Login> {
             call.sessions.set(call.principal<UserPrincipal>())
 
-            call.respond(HttpStatusCode.OK)
+            call.respond(mapOf("role" to call.principal<UserPrincipal>()!!.role))
         }
     }
 

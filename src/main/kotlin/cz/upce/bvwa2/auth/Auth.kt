@@ -18,7 +18,7 @@ data class UserPrincipal(
     val username: String,
     val remoteHost: String,
     val expiration: Long,
-    val roles: Set<String>,
+    val role: String,
 ) : Principal
 
 private fun validateExpiration(expiration: Long) = expiration > System.currentTimeMillis()
@@ -51,7 +51,7 @@ fun Application.configureAuth() {
                 val user = userRepository.getUserByNickname(credentials.name) ?: return@validate null
 
                 if (encryption.checkPassword(credentials.password, user.password)) {
-                    UserPrincipal(user.id, user.nickName, request.origin.remoteHost, getExpiration(), setOf(user.role.lowercase()))
+                    UserPrincipal(user.id, user.nickName, request.origin.remoteHost, getExpiration(), user.role.lowercase())
                 } else {
                     null
                 }
@@ -81,7 +81,7 @@ fun Application.configureAuth() {
 
         roleBased {
             extractRoles {
-                (it as UserPrincipal).roles
+                setOf((it as UserPrincipal).role)
             }
             throwErrorOnUnauthorizedResponse = true
         }
