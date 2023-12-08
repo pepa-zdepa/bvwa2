@@ -24,15 +24,15 @@ class MessagesDao : IMessagesDao {
             .map(::mapRowToEntity)
     }
 
-    override fun add(messageI: Message) {
+    override fun add(messageIn: Message) {
         try {
             Messages.insert {
-                it[subject] = messageI.subject
-                it[from] = messageI.from
-                it[to] = messageI.to
-                it[message] = messageI.message
-                it[time] = messageI.time
-                it[response] = messageI.response
+                it[subject] = messageIn.subject
+                it[from] = messageIn.from
+                it[to] = messageIn.to
+                it[message] = messageIn.message
+                it[time] = messageIn.time
+                it[responseTo] = messageIn.responseTo
             }
         } catch (e: Exception) {
             throw PersistenceException("Chyba při vkládání chyby do databáze", e)
@@ -46,7 +46,8 @@ class MessagesDao : IMessagesDao {
             row[Messages.to],
             row[Messages.message],
             row[Messages.time],
-            row[Messages.response]
+            row[Messages.responseTo],
+            row[Messages.seen]
         )
         message.id = row[Messages.id]
 

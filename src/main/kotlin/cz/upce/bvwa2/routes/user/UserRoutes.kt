@@ -66,7 +66,7 @@ fun Route.userRoutes() {
         post<User.UploadImage> {
             val userId = call.principal<UserPrincipal>()!!.userId
 
-            userRepository.uploadImg(userId)
+            userRepository.uploadImg(userId, ByteArray(0))
             call.respond(HttpStatusCode.OK)
         }
 

@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MessagesResponse(
-    val messages: List<Message>
+    val messageRequests: List<MessageRequest>
 )

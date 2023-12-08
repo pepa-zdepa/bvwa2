@@ -33,7 +33,7 @@ class UserDao(
                 it[firstName] = encryption.encrypt(user.firstName)
                 it[lastName] = encryption.encrypt(user.lastName)
                 it[password] = encryption.hashPassword(user.password)
-                it[img] = ExposedBlob(user.img ?: ByteArray(0))
+                it[img] = null
                 it[role] = user.role
                 it[nickName] = user.nickName
                 it[email] = encryption.encrypt(user.email)

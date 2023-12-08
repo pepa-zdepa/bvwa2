@@ -26,10 +26,10 @@ class UserRepository(
     }
 
     fun getUser(userId: Long): UserResponse = transaction {
-        val user = userDao.getById(userId)
-        if (user != null) {
-            User.toRequest(user)
-        } else {
+        try {
+            val user = userDao.getById(userId)
+            User.toRequest(user ?: throw PersistenceException("uživatel s tímto id neexistuje"))
+        } catch (e: Exception) {
             throw PersistenceException("uživatel s tímto id neexistuje")
         }
     }
@@ -40,8 +40,7 @@ class UserRepository(
 
     fun update(userId: Long, createUserRequest: UpdateUserRequest) = transaction {
         val userById = userDao.getById(userId)
-        val userByNickname = createUserRequest.user.let { userDao.getByNickname(it) }
-        if (userById != null && userByNickname != null) {
+        if (userById != null) {
             val role = userById.role
             User.fromRequestUp(createUserRequest, role)?.let { userDao.update(userId, it) }
         } else {
@@ -49,20 +48,18 @@ class UserRepository(
         }
     }
 
-    fun uploadImg(id: Long) = transaction {
-        val user = userDao.getById(id)
-        if (user != null) {
-            //userDao.uploadImg(id)
-        } else {
+    fun uploadImg(id: Long, img: ByteArray) = transaction {
+        try {
+            userDao.uploadImg(id, img)
+        } catch (e: Exception) {
             throw PersistenceException("uživatel s tímto id neexistuje")
         }
     }
 
     fun updatePassword(id: Long, password: String) = transaction {
-        val user = userDao.getById(id)
-        if (user != null) {
+        try {
             userDao.updatePassword(id, password)
-        } else {
+        } catch (e: Exception) {
             throw PersistenceException("uživatel s tímto id neexistuje")
         }
     }
@@ -73,12 +70,7 @@ class UserRepository(
     }
 
     fun delete(userId: Long) = transaction {
-        val user = userDao.getById(userId)
-        if (user != null) {
-            userDao.delete(userId)
-        } else {
-            throw PersistenceException("uživatel s tímto id neexistuje")
-        }
+        userDao.delete(userId)
     }
 
     fun doesUserExist(userNickName: String): Boolean{

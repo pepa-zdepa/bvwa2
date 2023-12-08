@@ -8,7 +8,8 @@ data class Message(
     val to: Long,
     val message: String,
     val time: Instant,
-    val response: String
+    val responseTo: Long?,
+    val seem: Boolean
 ) {
     var id: Long = 0
 }

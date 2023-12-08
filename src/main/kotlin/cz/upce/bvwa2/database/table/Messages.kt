@@ -10,7 +10,8 @@ object Messages : Table() {
     val to = long("to") references Users.id
     val message = varchar("message", 5000)
     val time = timestamp("time")
-    val response = varchar("response", 5000)
+    val responseTo = long("responseTo").nullable()
+    val seen = bool("seen")
 
     override val primaryKey = PrimaryKey(id)
 }
