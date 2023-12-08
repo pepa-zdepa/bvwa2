@@ -43,6 +43,12 @@ class User {
 
     @Resource("/{id}/image")
     class Image(val parent: User = User(), val id: String)
+
+    @Resource("/genders")
+    class Genders(val parent: User = User())
+
+    @Resource("/roles")
+    class Roles(val parent: User = User())
 }
 
 fun Route.userRoutes() {
@@ -54,6 +60,10 @@ fun Route.userRoutes() {
         val requestUser = call.receive<CreateUserRequest>()
         userRepository.add(requestUser)
         call.respond(HttpStatusCode.OK)
+    }
+
+    get<User.Genders> {
+        call.respond(userRepository.getAllGenders())
     }
 
     authenticate("session") {
@@ -132,6 +142,10 @@ fun Route.userRoutes() {
             userRepository.uploadImg(userId, image)
 
             call.respond(HttpStatusCode.OK)
+        }
+
+        get<User.Roles> {
+            call.respond(userRepository.getAllRoles())
         }
     }
 }
