@@ -22,7 +22,10 @@ class User {
     @Resource("/messages")
     class Messages(val parent: User = User(), val direction: String = "in") {
         @Resource("/{messageId}")
-        class ById(val parent: Messages = Messages(), val messageId: String)
+        class ById(val parent: Messages = Messages(), val messageId: String = "") {
+            @Resource("/seen")
+            class Seen(val parent: ById = ById())
+        }
     }
 
     @Resource("/update-password")
@@ -85,6 +88,12 @@ fun Route.userRoutes() {
             val userId = call.principal<UserPrincipal>()!!.userId
 
             call.respond(it.messageId)
+        }
+
+        post<User.Messages.ById.Seen> {
+            val userId = call.principal<UserPrincipal>()!!.userId
+
+            call.respond(it.parent.messageId)
         }
 
         get<User.Image> {
