@@ -7,9 +7,9 @@ import cz.upce.bvwa2.database.DatabaseConnection
 import cz.upce.bvwa2.database.dao.*
 import cz.upce.bvwa2.database.encryption.Encryption
 import cz.upce.bvwa2.plugins.configurePlugins
+import cz.upce.bvwa2.repository.MessageRepository
 import cz.upce.bvwa2.repository.SessionRepository
 import cz.upce.bvwa2.repository.UserRepository
-import cz.upce.bvwa2.repository.MessageRepository
 import cz.upce.bvwa2.routes.configureRoutes
 import cz.upce.bvwa2.utils.IdConverter
 import io.ktor.server.application.*
@@ -64,8 +64,6 @@ fun Application.module() {
     di {
         bindInstance { appConfig }
 
-        bindSingletonOf(::DatabaseConnection)
-
         bindProviderOf(::Encryption)
         bindSingleton<IdConverter> { IdConverter(instance<Config>().security.sqidsAlphabet) }
 
@@ -74,6 +72,8 @@ fun Application.module() {
         bindProvider<IRoleDao> { new(::RoleDao) }
         bindProvider<ISessionDao> { new(::SessionDao) }
         bindProvider<IUserDao> { new(::UserDao) }
+
+        bindSingletonOf(::DatabaseConnection)
 
         bindProviderOf(::SessionRepository)
         bindProviderOf(::UserRepository)
@@ -95,7 +95,7 @@ fun Application.module() {
 
     val databaseConnection by closestDI().instance<DatabaseConnection>()
     databaseConnection.connect()
-    //databaseConnection.init()
+    databaseConnection.init()
 
     configurePlugins()
     configureAuth()
