@@ -9,6 +9,7 @@ import cz.upce.bvwa2.database.encryption.Encryption
 import cz.upce.bvwa2.plugins.configurePlugins
 import cz.upce.bvwa2.repository.SessionRepository
 import cz.upce.bvwa2.repository.UserRepository
+import cz.upce.bvwa2.repository.MessageRepository
 import cz.upce.bvwa2.routes.configureRoutes
 import cz.upce.bvwa2.utils.IdConverter
 import io.ktor.server.application.*
@@ -76,6 +77,7 @@ fun Application.module() {
 
         bindProviderOf(::SessionRepository)
         bindProviderOf(::UserRepository)
+        bindProviderOf(::MessageRepository)
 
         bindSingleton<SessionStorage> {
             object : SessionStorage {
@@ -93,7 +95,7 @@ fun Application.module() {
 
     val databaseConnection by closestDI().instance<DatabaseConnection>()
     databaseConnection.connect()
-//    databaseConnection.init()
+    //databaseConnection.init()
 
     configurePlugins()
     configureAuth()

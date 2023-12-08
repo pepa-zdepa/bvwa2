@@ -7,7 +7,11 @@ interface IMessagesDao {
 
     fun getById(id: Long): Message?
 
-    fun getFromTo(idFrom: Long, idTo: Long): List<Message>
+    fun getByUserId(id: Long): List<Message>
+
+    fun getFromTo(from: String, to: String): List<Message>
+
+    fun updateMessageSeen(id: Long)
 
     fun add(message: Message)
 }

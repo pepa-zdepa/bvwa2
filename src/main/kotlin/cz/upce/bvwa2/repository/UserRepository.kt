@@ -28,7 +28,7 @@ class UserRepository(
     fun getUser(userId: Long): UserResponse = transaction {
         try {
             val user = userDao.getById(userId)
-            User.toRequest(user ?: throw PersistenceException("uživatel s tímto id neexistuje"))
+            User.toResponse(user ?: throw PersistenceException("uživatel s tímto id neexistuje"))
         } catch (e: Exception) {
             throw PersistenceException("uživatel s tímto id neexistuje")
         }

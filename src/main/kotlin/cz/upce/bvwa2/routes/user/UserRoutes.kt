@@ -2,7 +2,9 @@ package cz.upce.bvwa2.routes.user
 
 import cz.upce.bvwa2.auth.UserPrincipal
 import cz.upce.bvwa2.models.CreateUserRequest
+import cz.upce.bvwa2.models.MessageRequest
 import cz.upce.bvwa2.models.UpdateUserRequest
+import cz.upce.bvwa2.repository.MessageRepository
 import cz.upce.bvwa2.repository.UserRepository
 import io.ktor.http.*
 import io.ktor.resources.*
@@ -40,6 +42,7 @@ class User {
 
 fun Route.userRoutes() {
     val userRepository by closestDI().instance<UserRepository>()
+    val messageRepository by closestDI().instance<MessageRepository>()
 
     post<User> {
         val requestUser = call.receive<CreateUserRequest>()
@@ -80,24 +83,30 @@ fun Route.userRoutes() {
 
         get<User.Messages> {
             val userId = call.principal<UserPrincipal>()!!.userId
+            val messages = messageRepository.getAllMessages(userId)
 
-            call.respond(it.direction)
+            call.respond(messages)
         }
 
         post<User.Messages> {
             val userId = call.principal<UserPrincipal>()!!.userId
+            val message = call.receive<MessageRequest>()
 
+            messageRepository.add(userId, message)
             call.respond(it.direction)
         }
 
         get<User.Messages.ById> {
             val userId = call.principal<UserPrincipal>()!!.userId
+            val messageId = it.messageId
 
-            call.respond(it.messageId)
+            val message = messageRepository.getById(messageId.toLong())
+            call.respond(message)
         }
 
         post<User.Messages.ById.Seen> {
             val userId = call.principal<UserPrincipal>()!!.userId
+            messageRepository.updateMessageSeen(it.parent.messageId.toLong())
 
             call.respond(it.parent.messageId)
         }

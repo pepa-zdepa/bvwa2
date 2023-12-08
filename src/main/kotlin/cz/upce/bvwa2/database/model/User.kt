@@ -46,7 +46,7 @@ data class User(
             )
         }
 
-        fun toRequest(user: User): UserResponse {
+        fun toResponse(user: User): UserResponse {
             return UserResponse(
                 firstName = user.firstName,
                 lastName = user.lastName,
