@@ -45,9 +45,9 @@ class UserDao(
         }
     }
 
-    override fun update(user: User) {
+    override fun update(id: Long, user: User) {
         try {
-            Users.update({ Users.id eq user.id }) {
+            Users.update({ Users.id eq id }) {
                 it[firstName] = encryption.encrypt(user.firstName)
                 it[lastName] = encryption.encrypt(user.lastName)
                 it[email] = encryption.encrypt(user.email)
@@ -64,6 +64,26 @@ class UserDao(
             Users.deleteWhere { (Users.id eq id) }
         } catch (e: Exception) {
             throw PersistenceException("Chyba při delete user v databázi", e)
+        }
+    }
+
+    override fun uploadImg(id: Long, img: ByteArray) {
+        try {
+            Users.update({ Users.id eq id }) {
+                it[Users.img] = ExposedBlob(img)
+            }
+        } catch (e: Exception) {
+            throw PersistenceException("Chyba při upload img do databáze", e)
+        }
+    }
+
+    override fun updatePassword(id: Long, password: String) {
+        try {
+            Users.update({ Users.id eq id }) {
+                it[Users.password] = encryption.hashPassword(password)
+            }
+        } catch (e: Exception) {
+            throw PersistenceException("Chyba při upload img do databáze", e)
         }
     }
 

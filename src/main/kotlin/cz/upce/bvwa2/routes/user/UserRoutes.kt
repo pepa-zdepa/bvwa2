@@ -63,12 +63,15 @@ fun Route.userRoutes() {
         post<User.UploadImage> {
             val userId = call.principal<UserPrincipal>()!!.userId
 
+            userRepository.uploadImg(userId)
             call.respond(HttpStatusCode.OK)
         }
 
         put<User.UpdatePassword> {
             val userId = call.principal<UserPrincipal>()!!.userId
+            val password = call.receive<String>()
 
+            userRepository.updatePassword(userId, password)
             call.respond(HttpStatusCode.OK)
         }
 
@@ -87,7 +90,8 @@ fun Route.userRoutes() {
         get<User.Image> {
             val userId = call.principal<UserPrincipal>()!!.userId
 
-            call.respond(HttpStatusCode.OK)
+            val img = userRepository.getImg(userId)
+            call.respond(img)
         }
     }
 }

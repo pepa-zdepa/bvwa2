@@ -43,10 +43,33 @@ class UserRepository(
         val userByNickname = createUserRequest.user.let { userDao.getByNickname(it) }
         if (userById != null && userByNickname != null) {
             val role = userById.role
-            User.fromRequestUp(createUserRequest, role)?.let { userDao.update(it) }
+            User.fromRequestUp(createUserRequest, role)?.let { userDao.update(userId, it) }
         } else {
             throw PersistenceException("uživatel s tímto id neexistuje")
         }
+    }
+
+    fun uploadImg(id: Long) = transaction {
+        val user = userDao.getById(id)
+        if (user != null) {
+            //userDao.uploadImg(id)
+        } else {
+            throw PersistenceException("uživatel s tímto id neexistuje")
+        }
+    }
+
+    fun updatePassword(id: Long, password: String) = transaction {
+        val user = userDao.getById(id)
+        if (user != null) {
+            userDao.updatePassword(id, password)
+        } else {
+            throw PersistenceException("uživatel s tímto id neexistuje")
+        }
+    }
+
+    fun getImg(id: Long): ByteArray = transaction {
+        val user = userDao.getById(id)
+        user?.img ?: throw PersistenceException("uživatel s tímto id neexistuje")
     }
 
     fun delete(userId: Long) = transaction {
