@@ -5,6 +5,6 @@ import cz.upce.bvwa2.database.model.Role
 interface IRoleDao {
     fun getAll(): List<Role>
 
-    fun getById(id: Long): Role?
+    fun getById(name: String): Role?
 
 }

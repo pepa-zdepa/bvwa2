@@ -7,6 +7,7 @@ import cz.upce.bvwa2.database.model.User
 import cz.upce.bvwa2.database.table.Users
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 
 class UserDao(
     private val encryption: Encryption,
@@ -29,14 +30,12 @@ class UserDao(
     }
 
     override fun add(user: User) {
-        println("PEPA")
-//        println(key)
         try {
             Users.insert {
                 it[firstName] = encryption.encrypt(user.firstName)
                 it[lastName] = encryption.encrypt(user.lastName)
-                it[password] = converter.hashPassword(user.password)
-                it[img] = user.img
+                it[password] = converter.hashPassword(user.password.toString())
+                it[img] = ExposedBlob(user.img ?: ByteArray(0))
                 it[role] = user.role
                 it[nickName] = user.nickName
                 it[email] = encryption.encrypt(user.email)
@@ -44,7 +43,7 @@ class UserDao(
                 it[phoneNumber] = encryption.encrypt(user.phoneNumber)
             }
         } catch (e: Exception) {
-            throw PersistenceException("Chyba při vkládání chyby do databáze", e)
+            throw PersistenceException("Chyba při vkládání uživatele do databáze", e)
         }
     }
 
@@ -53,9 +52,6 @@ class UserDao(
             Users.update({ Users.id eq user.id }) {
                 it[firstName] = encryption.encrypt(user.firstName)
                 it[lastName] = encryption.encrypt(user.lastName)
-                it[img] = user.img
-                it[role] = user.role
-                it[nickName] = user.nickName
                 it[email] = encryption.encrypt(user.email)
                 it[gender] = user.gender
                 it[phoneNumber] = encryption.encrypt(user.phoneNumber)
@@ -78,7 +74,7 @@ class UserDao(
             encryption.decrypt(row[Users.firstName]),
             encryption.decrypt(row[Users.lastName]),
             row[Users.password],
-            row[Users.img],
+            row[Users.img]?.bytes,
             row[Users.role],
             row[Users.nickName],
             encryption.decrypt(row[Users.email]),

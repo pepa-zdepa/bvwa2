@@ -72,7 +72,7 @@ upraví uživatele (id v session)
 smaže uživatele (id v session)
 #### body: json/form-url-encoded TODO
 
-### GET /user/messages
+### GET /user/message
 vrátí všechny zprávy uživatele (id v session)
 #### query:
 * direction: String - incoming, outgoing
@@ -89,7 +89,7 @@ vrátí všechny zprávy uživatele (id v session)
 ]
 ```
 
-### GET /user/messages/{messageId}
+### GET /user/message/{messageId}
 vrátí zprávu uživatele dle messageId
 #### response: TODO
 ```
@@ -102,7 +102,7 @@ vrátí zprávu uživatele dle messageId
 }
 ```
 
-### DELETE /user/messages/{messageId}
+### DELETE /user/message/{messageId}
 smaže zprávu uživatele dle messageId
 #### response: TODO
 ```

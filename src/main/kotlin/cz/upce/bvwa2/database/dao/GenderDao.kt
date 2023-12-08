@@ -11,13 +11,13 @@ class GenderDao : IGenderDao {
         return Genders.selectAll().map(::mapRowToEntity)
     }
 
-    override fun getById(id: Long): Gender? {
-        return Genders.select { Genders.id eq id }
+    override fun getByName(name: String): Gender? {
+        return Genders.select { Genders.genderName eq name }
             .singleOrNull()
             ?.let(::mapRowToEntity)
     }
 
     private fun mapRowToEntity(row: ResultRow): Gender {
-        return Gender.valueOf(row[Genders.genderName])
+        return Gender.valueOf(row[Genders.genderName].uppercase())
     }
 }

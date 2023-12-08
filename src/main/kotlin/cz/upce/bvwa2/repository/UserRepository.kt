@@ -20,14 +20,8 @@ class UserRepository(
     private val idConverter: IdConverter
 ) {
     fun add(createUserRequest: CreateUserRequest) = transaction {
-        val user = userDao.getByNickname(createUserRequest.user)
-        val roleId: Short = 2
-        val sexId: Short = when (Gender.valueOf(createUserRequest.gender.uppercase())) {
-            Gender.MALE -> 1
-            else -> 2
-        }
-        if (user == null) {
-            userDao.add(User.fromRequest(createUserRequest, roleId, sexId))
+        if (!doesUserExist(createUserRequest.user)) {
+            userDao.add(User.fromRequest(createUserRequest))
         } else {
             throw PersistenceException("uživatel jiz existuje")
         }
@@ -36,9 +30,7 @@ class UserRepository(
     fun getUser(userId: Long): UserResponse = transaction {
         val user = userDao.getById(userId)
         if (user != null) {
-            val role = Role.valueOf(roleDao.getById(user.role.toLong()).toString()).toString()
-            val gender = Gender.valueOf(genderDao.getById(user.gender.toLong()).toString()).toString()
-            User.toRequest(user, role, gender)
+            User.toRequest(user)
         } else {
             throw PersistenceException("uživatel s tímto id neexistuje")
         }
@@ -46,14 +38,10 @@ class UserRepository(
 
     fun update(userId: Long, createUserRequest: UpdateUserRequest) = transaction {
         val userById = userDao.getById(userId)
-        val userByNickname = createUserRequest.user?.let { userDao.getByNickname(it) }
+        val userByNickname = createUserRequest.user.let { userDao.getByNickname(it) }
         if (userById != null && userByNickname != null) {
-            val roleId: Short = 2
-            val sexId: Short = when (createUserRequest.gender?.let { Gender.valueOf(it.uppercase()) }) {
-                Gender.MALE -> 1
-                else -> 2
-            }
-            User.fromRequestUp(createUserRequest, roleId, sexId)?.let { userDao.update(it) }
+            val role = userById.role
+            User.fromRequestUp(createUserRequest, role)?.let { userDao.update(it) }
         } else {
             throw PersistenceException("uživatel s tímto id neexistuje")
         }
@@ -66,6 +54,10 @@ class UserRepository(
         } else {
             throw PersistenceException("uživatel s tímto id neexistuje")
         }
+    }
+
+    private fun doesUserExist(userNickName: String): Boolean{
+        return userDao.getByNickname(userNickName) != null
     }
 
 }

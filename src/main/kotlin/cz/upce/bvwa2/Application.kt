@@ -4,6 +4,7 @@ import com.sksamuel.hoplite.*
 import com.sksamuel.hoplite.sources.SystemPropertiesPropertySource
 import cz.upce.bvwa2.auth.configureAuth
 import cz.upce.bvwa2.database.Converter
+import cz.upce.bvwa2.database.DatabaseConnection
 import cz.upce.bvwa2.database.dao.*
 import cz.upce.bvwa2.database.encryption.Encryption
 import cz.upce.bvwa2.plugins.configurePlugins
@@ -66,14 +67,14 @@ fun Application.module() {
     di {
         bindInstance { appConfig }
 
-        bindSingletonOf(::DataFactory)
+        bindSingletonOf(::DatabaseConnection)
 
         bindProviderOf(::Converter)
         bindProviderOf(::Encryption)
         bindSingleton<IdConverter> { IdConverter(instance<Config>().security.sqidsAlphabet) }
 
         bindProvider<IGenderDao> { new(::GenderDao) }
-        bindProvider<ICommunicationDao> { new(::CommunicationDao) }
+        bindProvider<IMessagesDao> { new(::MessagesDao) }
         bindProvider<IRoleDao> { new(::RoleDao) }
         bindProvider<ISessionDao> { new(::SessionDao) }
         bindProvider<IUserDao> { new(::UserDao) }
@@ -95,9 +96,9 @@ fun Application.module() {
         }
     }
 
-    val dataFactory by closestDI().instance<DataFactory>()
-    dataFactory.connect()
-//    dataFactory.init()
+    val databaseConnection by closestDI().instance<DatabaseConnection>()
+    databaseConnection.connect()
+    databaseConnection.init()
 
     configurePlugins()
     configureAuth()

@@ -3,13 +3,14 @@ package cz.upce.bvwa2.database.table
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
-object Communications : Table() {
+object Messages : Table() {
     val id = long("id").autoIncrement()
-    val subject = varchar("subject", 50)
-    val from = long("from")
-    val to = long("to")
-    val message = varchar("message", 255)
+    val subject = varchar("subject", 200)
+    val from = long("from") references Users.id
+    val to = long("to") references Users.id
+    val message = varchar("message", 5000)
     val time = timestamp("time")
+    val response = varchar("response", 5000)
 
     override val primaryKey = PrimaryKey(id)
 }
