@@ -84,6 +84,12 @@ fun Route.userRoutes() {
             call.respond(it.direction)
         }
 
+        post<User.Messages> {
+            val userId = call.principal<UserPrincipal>()!!.userId
+
+            call.respond(it.direction)
+        }
+
         get<User.Messages.ById> {
             val userId = call.principal<UserPrincipal>()!!.userId
 
