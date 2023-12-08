@@ -19,17 +19,32 @@ class MessageRepository(
         messagesDao.add(Message.fromRequest(messageRequest, userFrom))
     }
 
-    fun getById(messageId: Long): MessageResponse = transaction {
-        messagesDao.getById(messageId)?.let { Message.toResponse(it) }
-            ?: throw PersistenceException("zpráva s tímto id neexistuje")
+    fun getById(messageId: Long, userId: Long): MessageResponse = transaction {
+        val message = messagesDao.getById(messageId) ?: throw PersistenceException("zpráva s tímto id neexistuje")
+        if (checkUser(message, userId)) {
+            Message.toResponse(message)
+        } else {
+            throw PersistenceException("uživatel s tímto id nemá právo přečíct email")
+        }
+
     }
 
     fun getAllMessages(userId: Long): List<MessageResponse> = transaction {
         messagesDao.getByUserId(userId).map { Message.toResponse(it) }
     }
 
-    fun updateMessageSeen(messageId: Long) = transaction {
-        messagesDao.updateMessageSeen(messageId)
+    fun updateMessageSeen(messageId: Long, userId: Long) = transaction {
+        val message = messagesDao.getById(messageId) ?: throw PersistenceException("uživatel s tímto id neexistuje")
+        if (checkUser(message, userId)) {
+            messagesDao.updateMessageSeen(messageId)
+        } else {
+            throw PersistenceException("uživatel s tímto id nemá právo aktualizovat email")
+        }
     }
+    fun checkUser(message: Message, userId: Long): Boolean {
+        val user = userDao.getById(userId) ?: throw PersistenceException("uživatel s tímto id neexistuje")
+        return user.nickName == message.to || user.nickName == message.from
+    }
+
 
 }

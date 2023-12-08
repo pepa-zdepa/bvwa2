@@ -73,6 +73,17 @@ class UserRepository(
         userDao.delete(userId)
     }
 
+    fun updateRole(id: Long, role: String) = transaction{
+        userDao.updateRole(id, role)
+    }
+
+    fun getAllUsers(): List<UserResponse> = transaction {
+        userDao.getAll().map { User.toResponse(it) }
+    }
+
+    fun getUserById(id: Long): UserResponse = transaction {
+        User.toResponse(userDao.getById(id) ?: throw PersistenceException("uživatel s tímto id neexistuje"))
+    }
     fun doesUserExist(userNickName: String): Boolean{
         return userDao.getByNickname(userNickName) != null
     }

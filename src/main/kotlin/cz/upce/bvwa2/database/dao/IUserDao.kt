@@ -18,4 +18,6 @@ interface IUserDao {
     fun uploadImg(id: Long, img: ByteArray)
 
     fun updatePassword(id: Long, password: String)
+
+    fun updateRole(id: Long, role: String)
 }

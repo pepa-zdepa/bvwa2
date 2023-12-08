@@ -99,13 +99,13 @@ fun Route.userRoutes() {
             val userId = call.principal<UserPrincipal>()!!.userId
             val messageId = it.messageId
 
-            val message = messageRepository.getById(messageId.toLong())
+            val message = messageRepository.getById(messageId.toLong(), userId)
             call.respond(message)
         }
 
         post<User.Messages.ById.Seen> {
             val userId = call.principal<UserPrincipal>()!!.userId
-            messageRepository.updateMessageSeen(it.parent.messageId.toLong())
+            messageRepository.updateMessageSeen(it.parent.messageId.toLong(), userId)
 
             call.respond(it.parent.messageId)
         }

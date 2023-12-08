@@ -87,6 +87,16 @@ class UserDao(
         }
     }
 
+    override fun updateRole(id: Long, role: String) {
+        try {
+            Users.update({ Users.id eq id }) {
+                it[Users.role] = role
+            }
+        } catch (e: Exception) {
+            throw PersistenceException("Chyba při upload img do databáze", e)
+        }
+    }
+
     private fun mapRowToEntity(row: ResultRow): User {
         val user = User(
             encryption.decrypt(row[Users.firstName]),
