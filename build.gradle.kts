@@ -49,7 +49,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposed_version")
-    implementation("org.xerial:sqlite-jdbc:3.40.0.0")
+    implementation("org.xerial:sqlite-jdbc:3.40.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
     implementation("io.ktor:ktor-server-metrics-micrometer-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-metrics-jvm:$ktor_version")
@@ -63,6 +63,10 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
     implementation("io.ktor:ktor-network-tls-certificates-jvm:2.3.6")
     implementation("io.ktor:ktor-server-http-redirect:$ktor_version")
+
+    // Validation
+    implementation("commons-validator:commons-validator:1.8.0")
+    implementation("org.passay:passay:1.6.4")
 
     // DI
     implementation("org.kodein.di:kodein-di:7.19.0")
