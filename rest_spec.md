@@ -89,7 +89,7 @@ vrátí všechny zprávy uživatele (id v session)
 ]
 ```
 
-### GET /user/message/{messageId}
+### GET /user/messages/{messageId}
 vrátí zprávu uživatele dle messageId
 #### response: TODO
 ```
@@ -102,7 +102,7 @@ vrátí zprávu uživatele dle messageId
 }
 ```
 
-### DELETE /user/message/{messageId}
+### DELETE /user/messages/{messageId}
 smaže zprávu uživatele dle messageId
 #### response: TODO
 ```

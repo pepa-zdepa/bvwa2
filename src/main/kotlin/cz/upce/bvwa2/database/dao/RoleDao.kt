@@ -11,7 +11,7 @@ class RoleDao : IRoleDao {
         return Roles.selectAll().map(::mapRowToEntity)
     }
 
-    override fun getById(name: String): Role? {
+    override fun getByName(name: String): Role? {
         return Roles.select { Roles.roleName eq name }
             .singleOrNull()
             ?.let(::mapRowToEntity)
