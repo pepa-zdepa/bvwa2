@@ -21,6 +21,6 @@ object Validator {
     fun validateEmail(email: String) = emailValidator.isValid(email)
     fun validatePassword(password: String) = passwordValidator.validate(PasswordData(password)).isValid
     fun validatePhone(phone: String) = phoneRegex.matches(phone)
-    fun notEmpty(value: String?) = value.isNullOrBlank()
+    fun notEmpty(value: String?) = !value.isNullOrBlank()
     fun validateImage(imageStream: InputStream) = ImageIO.read(imageStream).width == 800
 }
