@@ -9,4 +9,5 @@ fun Application.configurePlugins() {
     configureStatusPages()
     configureHttpsRedirect()
     configureCachingHeaders()
+    configureRequestValidation()
 }

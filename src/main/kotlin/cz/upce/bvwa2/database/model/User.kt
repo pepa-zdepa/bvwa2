@@ -37,12 +37,12 @@ data class User(
                 firstName = requestUser.firstName,
                 lastName = requestUser.lastName,
                 role = role,
-                nickName = requestUser.user,
+                nickName = "nejde", //TODO
                 email = requestUser.email,
                 gender =requestUser.gender,
                 phoneNumber = requestUser.phone,
-                img = ByteArray(0),
-                password = "pepa"
+                img = null,
+                password = "nejde" //TODO
             )
         }
 
@@ -51,7 +51,6 @@ data class User(
                 firstName = user.firstName,
                 lastName = user.lastName,
                 email = user.email,
-                img = user.img ?: ByteArray(0),
                 phone = user.phoneNumber,
                 role = user.role,
                 gender = user.gender,

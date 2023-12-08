@@ -17,6 +17,7 @@ object Validator {
     private val emailValidator = EmailValidator.getInstance()
     private val phoneRegex = """^(\+\d{1,3}( )?)?((\(\d{3}\))|\d{3})[- .]?\d{3}[- .]?\d{4}$|^(\+\d{1,3}( )?)?(\d{3}[ ]?){2}\d{3}$|^(\+\d{1,3}( )?)?(\d{3}[ ]?)(\d{2}[ ]?){2}\d{2}$""".toRegex()
 
+    fun validateUsername(username: String) = username.length <= 5
     fun validateEmail(email: String) = emailValidator.isValid(email)
     fun validatePassword(password: String) = passwordValidator.validate(PasswordData(password)).isValid
     fun validatePhone(phone: String) = phoneRegex.matches(phone)

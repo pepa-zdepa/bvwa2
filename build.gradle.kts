@@ -64,6 +64,7 @@ dependencies {
     implementation("io.ktor:ktor-network-tls-certificates-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-http-redirect:$ktor_version")
     implementation("io.ktor:ktor-server-caching-headers:$ktor_version")
+    implementation("io.ktor:ktor-server-request-validation:$ktor_version")
 
     // Validation
     implementation("commons-validator:commons-validator:1.8.0")

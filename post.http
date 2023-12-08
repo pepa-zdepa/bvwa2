@@ -1,0 +1,19 @@
+#POST https://localhost:8443/user/upload-image
+#Content-Type: multipart/form-data; boundary=WebAppBoundary
+#
+#--WebAppBoundary
+#Content-Disposition: form-data; name="description"
+#Content-Type: text/plain
+#
+#Ktor logo
+#--WebAppBoundary
+#Content-Disposition: form-data; name="image"; filename="test.tiff"
+#Content-Type: image/png
+#
+#< ./test.tiff
+#--WebAppBoundary--
+
+POST https://localhost:8443/user/upload-image
+Content-Type: image/png
+
+< ./test.tiff

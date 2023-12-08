@@ -8,5 +8,5 @@ data class MessageRequest(
     @SerialName(value = "to") val to: String,
     @SerialName(value = "subject") val subject: String,
     @SerialName(value = "message") val message: String,
-    @SerialName(value = "responseTo") val responseTo: Long?
+    @SerialName(value = "responseTo") val responseTo: String?
 )

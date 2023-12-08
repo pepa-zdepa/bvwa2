@@ -10,5 +10,4 @@ data class UpdateUserRequest(
     @SerialName(value = "email") val email: String,
     @SerialName(value = "phone") val phone: String,
     @SerialName(value = "gender") val gender: String,
-    @SerialName(value = "user") val user: String
 )

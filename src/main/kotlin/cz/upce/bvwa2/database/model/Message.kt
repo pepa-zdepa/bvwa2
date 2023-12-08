@@ -25,7 +25,7 @@ data class Message(
                 to = requestMessage.to,
                 message = requestMessage.message,
                 time = Clock.System.now(),
-                responseTo = requestMessage.responseTo,
+                responseTo = requestMessage.responseTo?.toLongOrNull(), // TODO
                 seen = false
             )
         }
@@ -37,7 +37,7 @@ data class Message(
                 to = message.to,
                 message = message.message,
                 time = message.time,
-                responseTo = message.responseTo,
+                responseTo = message.responseTo.toString(), // TODO
                 seen = message.seen
             )
         }
