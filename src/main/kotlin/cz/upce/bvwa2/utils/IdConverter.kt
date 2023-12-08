@@ -5,7 +5,7 @@ import org.sqids.Sqids
 class IdConverter(alphabet: String, minLength: Int = 10) {
     private val sqids = Sqids.builder().alphabet(alphabet).minLength(minLength).build()
 
-    fun encode(id: Long) = sqids.encode(listOf(id))
+    fun encode(id: Long): String = sqids.encode(listOf(id))
 
-    fun decode(id: String) = sqids.decode(id).first()
+    fun decode(id: String): Long = sqids.decode(id).first()
 }

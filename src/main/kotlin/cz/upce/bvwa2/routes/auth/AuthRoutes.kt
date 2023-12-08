@@ -2,6 +2,7 @@ package cz.upce.bvwa2.routes.auth
 
 import cz.upce.bvwa2.auth.UserPrincipal
 import cz.upce.bvwa2.repository.UserRepository
+import cz.upce.bvwa2.utils.IdConverter
 import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.application.*
@@ -32,12 +33,14 @@ class Auth {
 fun Route.authRoutes() {
     val sessionStorage by closestDI().instance<SessionStorage>()
     val userRepository by closestDI().instance<UserRepository>()
+    val idConverter by closestDI().instance<IdConverter>()
 
     authenticate("form") {
         post<Auth.Login> {
-            call.sessions.set(call.principal<UserPrincipal>())
+            val principal = call.principal<UserPrincipal>()!!
+            call.sessions.set(principal)
 
-            call.respond(mapOf("role" to call.principal<UserPrincipal>()!!.role))
+            call.respond(mapOf("role" to principal.role, "id" to idConverter.encode(principal.userId)))
         }
     }
 

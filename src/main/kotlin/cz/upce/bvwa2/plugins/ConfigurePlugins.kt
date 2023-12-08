@@ -8,4 +8,5 @@ fun Application.configurePlugins() {
     configureResources()
     configureStatusPages()
     configureHttpsRedirect()
+    configureCachingHeaders()
 }

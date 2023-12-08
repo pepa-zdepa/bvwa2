@@ -2,6 +2,8 @@ package cz.upce.bvwa2.utils
 
 import org.apache.commons.validator.routines.EmailValidator
 import org.passay.*
+import java.io.InputStream
+import javax.imageio.ImageIO
 
 
 object Validator {
@@ -19,4 +21,5 @@ object Validator {
     fun validatePassword(password: String) = passwordValidator.validate(PasswordData(password)).isValid
     fun validatePhone(phone: String) = phoneRegex.matches(phone)
     fun notEmpty(value: String?) = value.isNullOrBlank()
+    fun validateImage(imageStream: InputStream) = ImageIO.read(imageStream).width == 800
 }

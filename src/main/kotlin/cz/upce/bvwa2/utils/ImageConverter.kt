@@ -1,5 +1,7 @@
 package cz.upce.bvwa2.utils
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import javax.imageio.IIOImage
@@ -8,9 +10,13 @@ import javax.imageio.ImageWriteParam
 
 
 object ImageConverter {
-    fun convertImage(imageStream: InputStream, quality: Float = 0.9f): ByteArray {
-        val image = ImageIO.read(imageStream)
-        imageStream.close()
+    suspend fun convertImage(imageStream: InputStream, quality: Float = 0.9f): ByteArray {
+        val image = withContext(Dispatchers.IO) {
+            val res = ImageIO.read(imageStream)
+            imageStream.close()
+
+            return@withContext res
+        }
 
         val jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next()
         val jpgWriteParam = jpgWriter.defaultWriteParam
@@ -27,5 +33,5 @@ object ImageConverter {
         }
     }
 
-    fun convertImage(imageByteArray: ByteArray, quality: Float = 0.9f) = convertImage(imageByteArray.inputStream(), quality)
+    suspend fun convertImage(imageByteArray: ByteArray, quality: Float = 0.9f) = convertImage(imageByteArray.inputStream(), quality)
 }
