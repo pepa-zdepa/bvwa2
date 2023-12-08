@@ -4,8 +4,6 @@ import cz.upce.bvwa2.database.PersistenceException
 import cz.upce.bvwa2.database.dao.IGenderDao
 import cz.upce.bvwa2.database.dao.IRoleDao
 import cz.upce.bvwa2.database.dao.IUserDao
-import cz.upce.bvwa2.database.model.Gender
-import cz.upce.bvwa2.database.model.Role
 import cz.upce.bvwa2.database.model.User
 import cz.upce.bvwa2.models.CreateUserRequest
 import cz.upce.bvwa2.models.UpdateUserRequest
@@ -56,7 +54,7 @@ class UserRepository(
         }
     }
 
-    private fun doesUserExist(userNickName: String): Boolean{
+    fun doesUserExist(userNickName: String): Boolean{
         return userDao.getByNickname(userNickName) != null
     }
 

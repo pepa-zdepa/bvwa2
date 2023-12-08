@@ -56,9 +56,9 @@ fun Route.authRoutes() {
 
     // 0 - false, 1 - true
     get<Auth.CheckUsernameAvailable> {
-        if (true)
-            call.respond("1")
-        else
+        if (userRepository.doesUserExist(it.username))
             call.respond("0")
+        else
+            call.respond("1")
     }
 }

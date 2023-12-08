@@ -9,6 +9,7 @@ class SessionRepository(private val sessionDao: ISessionDao) {
     fun getById(id: String): Session? = transaction{
         sessionDao.getByid(id)
     }
+
     fun add(id: String, value: String) = transaction{
         sessionDao.add(id, value)
     }

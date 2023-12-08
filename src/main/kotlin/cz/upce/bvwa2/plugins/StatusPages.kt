@@ -19,7 +19,7 @@ fun Application.configureStatusPages() {
             call.respondText(text = "Unauthorized" , status = HttpStatusCode.Forbidden)
         }
         exception<PersistenceException> { call, cause ->
-            call.respond(HttpStatusCode.BadRequest)
+            call.respond(HttpStatusCode.BadRequest, cause.message.toString())
         }
     }
 }
