@@ -3,7 +3,6 @@ package cz.upce.bvwa2
 import com.sksamuel.hoplite.*
 import com.sksamuel.hoplite.sources.SystemPropertiesPropertySource
 import cz.upce.bvwa2.auth.configureAuth
-import cz.upce.bvwa2.database.Converter
 import cz.upce.bvwa2.database.DatabaseConnection
 import cz.upce.bvwa2.database.dao.*
 import cz.upce.bvwa2.database.encryption.Encryption
@@ -46,9 +45,6 @@ fun main() {
             appConfig.server.ssl.keyStorePassword.toCharArray(),
         )
 
-//        connector {
-//            port = appConfig.server.port
-//        }
         sslConnector(
             keyStore = keyStore,
             keyAlias = appConfig.server.ssl.keyAlias,
@@ -69,7 +65,6 @@ fun Application.module() {
 
         bindSingletonOf(::DatabaseConnection)
 
-        bindProviderOf(::Converter)
         bindProviderOf(::Encryption)
         bindSingleton<IdConverter> { IdConverter(instance<Config>().security.sqidsAlphabet) }
 
@@ -98,7 +93,7 @@ fun Application.module() {
 
     val databaseConnection by closestDI().instance<DatabaseConnection>()
     databaseConnection.connect()
-    databaseConnection.init()
+//    databaseConnection.init()
 
     configurePlugins()
     configureAuth()

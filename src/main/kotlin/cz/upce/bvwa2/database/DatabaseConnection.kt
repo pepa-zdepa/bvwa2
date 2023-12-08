@@ -14,7 +14,7 @@ class DatabaseConnection(private val config: Config) {
 
     fun init() {
         transaction {
-/*            SchemaUtils.create(Messages)
+            SchemaUtils.create(Messages)
             SchemaUtils.create(Users)
             SchemaUtils.create(Roles)
             SchemaUtils.create(Sessions)
@@ -31,7 +31,7 @@ class DatabaseConnection(private val config: Config) {
 
             Genders.insert {
                 it[genderName] = "FEMALE"
-            }*/
+            }
         }
     }
 }

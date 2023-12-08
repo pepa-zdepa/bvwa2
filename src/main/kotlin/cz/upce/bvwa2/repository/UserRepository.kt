@@ -34,6 +34,10 @@ class UserRepository(
         }
     }
 
+    fun getUserByNickname(nickname: String): User? = transaction {
+        userDao.getByNickname(nickname)
+    }
+
     fun update(userId: Long, createUserRequest: UpdateUserRequest) = transaction {
         val userById = userDao.getById(userId)
         val userByNickname = createUserRequest.user.let { userDao.getByNickname(it) }

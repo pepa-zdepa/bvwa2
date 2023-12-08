@@ -1,7 +1,7 @@
 package cz.upce.bvwa2.auth
 
 import cz.upce.bvwa2.Config
-import cz.upce.bvwa2.repository.SessionRepository
+import cz.upce.bvwa2.database.encryption.Encryption
 import cz.upce.bvwa2.repository.UserRepository
 import io.github.omkartenkale.ktor_role_based_auth.roleBased
 import io.ktor.http.*
@@ -18,7 +18,7 @@ data class UserPrincipal(
     val username: String,
     val remoteHost: String,
     val expiration: Long,
-    val roles: Set<String> = setOf("user"),
+    val roles: Set<String>,
 ) : Principal
 
 private fun validateExpiration(expiration: Long) = expiration > System.currentTimeMillis()
@@ -27,6 +27,7 @@ fun Application.configureAuth() {
     val userRepository by closestDI().instance<UserRepository>()
     val config by closestDI().instance<Config>()
     val sessionStorage by closestDI().instance<SessionStorage>()
+    val encryption by closestDI().instance<Encryption>()
 
     fun getExpiration() = System.currentTimeMillis() + config.auth.session.expirationInSeconds * 1000
 
@@ -47,9 +48,10 @@ fun Application.configureAuth() {
             passwordParamName = "password"
 
             validate {credentials ->
-                // TODO get data from DB
-                if (credentials.name == "user" && credentials.password == "pass") {
-                    UserPrincipal(0, "user", request.origin.remoteHost, getExpiration())
+                val user = userRepository.getUserByNickname(credentials.name) ?: return@validate null
+
+                if (encryption.checkPassword(credentials.password, user.password)) {
+                    UserPrincipal(user.id, user.nickName, request.origin.remoteHost, getExpiration(), setOf(user.role.lowercase()))
                 } else {
                     null
                 }

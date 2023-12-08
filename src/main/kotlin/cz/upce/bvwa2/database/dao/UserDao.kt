@@ -1,6 +1,5 @@
 package cz.upce.bvwa2.database.dao
 
-import cz.upce.bvwa2.database.Converter
 import cz.upce.bvwa2.database.PersistenceException
 import cz.upce.bvwa2.database.encryption.Encryption
 import cz.upce.bvwa2.database.model.User
@@ -11,7 +10,6 @@ import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 
 class UserDao(
     private val encryption: Encryption,
-    private val converter: Converter,
 ): IUserDao {
     override fun getAll(): List<User> {
         return Users.selectAll().map(::mapRowToEntity)
@@ -34,7 +32,7 @@ class UserDao(
             Users.insert {
                 it[firstName] = encryption.encrypt(user.firstName)
                 it[lastName] = encryption.encrypt(user.lastName)
-                it[password] = converter.hashPassword(user.password.toString())
+                it[password] = encryption.hashPassword(user.password)
                 it[img] = ExposedBlob(user.img ?: ByteArray(0))
                 it[role] = user.role
                 it[nickName] = user.nickName

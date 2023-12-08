@@ -1,9 +1,7 @@
 package cz.upce.bvwa2.database.encryption
 
 import cz.upce.bvwa2.Config
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.security.KeyStore
+import org.mindrot.jbcrypt.BCrypt
 import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -38,5 +36,13 @@ class Encryption(config: Config) {
         val decodedData = Base64.getDecoder().decode(data)
         val decryptedByteValue = cipher.doFinal(decodedData)
         return String(decryptedByteValue)
+    }
+
+    fun hashPassword(password: String): String {
+        return BCrypt.hashpw(password, BCrypt.gensalt())
+    }
+
+    fun checkPassword(candidate: String, hashed: String): Boolean {
+        return BCrypt.checkpw(candidate, hashed)
     }
 }
