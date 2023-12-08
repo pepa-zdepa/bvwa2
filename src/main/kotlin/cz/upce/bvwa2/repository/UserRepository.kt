@@ -4,6 +4,8 @@ import cz.upce.bvwa2.database.PersistenceException
 import cz.upce.bvwa2.database.dao.IGenderDao
 import cz.upce.bvwa2.database.dao.IRoleDao
 import cz.upce.bvwa2.database.dao.IUserDao
+import cz.upce.bvwa2.database.model.Gender
+import cz.upce.bvwa2.database.model.Role
 import cz.upce.bvwa2.database.model.User
 import cz.upce.bvwa2.models.CreateUserRequest
 import cz.upce.bvwa2.models.UpdateUserRequest
@@ -88,4 +90,11 @@ class UserRepository(
         return userDao.getByNickname(userNickName) != null
     }
 
+    fun getAllRoles(): List<String> = transaction {
+        roleDao.getAll().map { it.toString() }
+    }
+
+    fun getAllGenders(): List<String> = transaction {
+        genderDao.getAll().map { it.toString() }
+    }
 }

@@ -2,6 +2,7 @@ package cz.upce.bvwa2.routes.admin
 
 import cz.upce.bvwa2.auth.UserPrincipal
 import cz.upce.bvwa2.repository.UserRepository
+import cz.upce.bvwa2.utils.IdConverter
 import io.github.omkartenkale.ktor_role_based_auth.withRole
 import io.ktor.http.*
 import io.ktor.resources.*
@@ -28,14 +29,15 @@ class Admin {
 
 fun Route.adminRoutes() {
     val userRepository by closestDI().instance<UserRepository>()
+    val idConverter by closestDI().instance<IdConverter>()
     withRole("admin") {
-        put<Admin.User.Role> {
+/*        put<Admin.User.Role> {
             val userId = call.principal<UserPrincipal>()!!.userId
             val role = it.newRole
 
             userRepository.updateRole(userId, role)
             call.respond(HttpStatusCode.OK)
-        }
+        }*/
 
         get<Admin.User> {
             val userId = it.id.toLong()
