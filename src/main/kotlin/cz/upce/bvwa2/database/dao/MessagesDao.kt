@@ -4,10 +4,7 @@ import cz.upce.bvwa2.database.PersistenceException
 import cz.upce.bvwa2.database.encryption.Encryption
 import cz.upce.bvwa2.database.model.Message
 import cz.upce.bvwa2.database.table.Messages
-import cz.upce.bvwa2.database.table.Users
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 
 class MessagesDao(
     private val encryption: Encryption,
