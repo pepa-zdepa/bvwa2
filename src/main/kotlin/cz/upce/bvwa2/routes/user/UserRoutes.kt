@@ -1,13 +1,17 @@
 package cz.upce.bvwa2.routes.user
 
-import cz.upce.bvwa2.database.PersistenceException
+import cz.upce.bvwa2.auth.UserPrincipal
 import cz.upce.bvwa2.models.CreateUserRequest
 import cz.upce.bvwa2.models.UpdateUserRequest
 import cz.upce.bvwa2.repository.UserRepository
 import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.request.*
+import io.ktor.server.resources.*
+import io.ktor.server.resources.post
+import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.kodein.di.instance
@@ -16,73 +20,74 @@ import org.kodein.di.ktor.closestDI
 @Resource("/user")
 class User {
     @Resource("/messages")
-    class Messages(val parent: User = User()) {
+    class Messages(val parent: User = User(), val direction: String = "in") {
         @Resource("/{messageId}")
         class ById(val parent: Messages = Messages(), val messageId: String)
     }
+
+    @Resource("/update-password")
+    class UpdatePassword(val parent: User = User())
+
+    @Resource("/upload-image")
+    class UploadImage(val parent: User = User())
+
+    @Resource("/{id}/image")
+    class Image(val parent: User = User(), val id: String)
 }
 
 fun Route.userRoutes() {
     val userRepository by closestDI().instance<UserRepository>()
 
-    route("/user") {
-        get("/{userId}") {
-            val userId = call.parameters["userId"]?.toLongOrNull()
-            if (userId == null) {
-                call.respond(HttpStatusCode.BadRequest, "Invalid user ID.")
-            } else {
-                try {
-                    val userResponse = userRepository.getUser(userId)
-                    call.respond(userResponse)
-                } catch (e: PersistenceException) {
-                    call.respond(HttpStatusCode.NotFound, e.message ?: "User not found.")
-                }
-            }
-        }
-        post {
-            val requestUser = call.receive<CreateUserRequest>()
-            userRepository.add(requestUser)
-            call.respond(HttpStatusCode.OK)
-        }
-        put("/{userId}") {
-            val userId = call.parameters["userId"]?.toLongOrNull()
-            val requestUser = call.receive<UpdateUserRequest>()
-            if (userId == null) {
-                call.respond(HttpStatusCode.BadRequest, "Invalid user ID.")
-            } else {
-                try {
-                    userRepository.update(userId, requestUser)
-                    call.respond(HttpStatusCode.OK)
-                } catch (e: PersistenceException) {
-                    call.respond(HttpStatusCode.NotFound, e.message ?: "User not found.")
-                }
-            }
-        }
-        delete("/{userId}") {
-            val userId = call.parameters["userId"]?.toLongOrNull()
-            if (userId == null) {
-                call.respond(HttpStatusCode.BadRequest, "Invalid user ID.")
-            } else {
-                try {
-                    val userResponse = userRepository.delete(userId)
-                    call.respond(userResponse)
-                } catch (e: PersistenceException) {
-                    call.respond(HttpStatusCode.NotFound, e.message ?: "User not found.")
-                }
-            }
-        }
+    post<User> {
+        val requestUser = call.receive<CreateUserRequest>()
+        userRepository.add(requestUser)
+        call.respond(HttpStatusCode.OK)
     }
 
-    // Nested routes for /user/messages
-    route("/user/messages") {
-        get {
-            // Code to return all messages for a user
+    authenticate("session") {
+        get<User> {
+            val userId = call.principal<UserPrincipal>()!!.userId
+
+            val userResponse = userRepository.getUser(userId)
+            call.respond(userResponse)
         }
-        get("{messageId}") {
-            // Code to return a message by messageId
+
+        put<User> {
+            val userId = call.principal<UserPrincipal>()!!.userId
+            val requestUser = call.receive<UpdateUserRequest>()
+
+            userRepository.update(userId, requestUser)
+            call.respond(HttpStatusCode.OK)
         }
-        delete("{messageId}") {
-            // Code to delete a message by messageId
+
+        post<User.UploadImage> {
+            val userId = call.principal<UserPrincipal>()!!.userId
+
+            call.respond(HttpStatusCode.OK)
+        }
+
+        put<User.UpdatePassword> {
+            val userId = call.principal<UserPrincipal>()!!.userId
+
+            call.respond(HttpStatusCode.OK)
+        }
+
+        get<User.Messages> {
+            val userId = call.principal<UserPrincipal>()!!.userId
+
+            call.respond(it.direction)
+        }
+
+        get<User.Messages.ById> {
+            val userId = call.principal<UserPrincipal>()!!.userId
+
+            call.respond(it.messageId)
+        }
+
+        get<User.Image> {
+            val userId = call.principal<UserPrincipal>()!!.userId
+
+            call.respond(HttpStatusCode.OK)
         }
     }
 }

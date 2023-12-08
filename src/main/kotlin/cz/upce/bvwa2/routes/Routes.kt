@@ -1,6 +1,7 @@
 package cz.upce.bvwa2.routes
 
 import cz.upce.bvwa2.auth.UserPrincipal
+import cz.upce.bvwa2.routes.admin.adminRoutes
 import cz.upce.bvwa2.routes.auth.authRoutes
 import cz.upce.bvwa2.routes.user.userRoutes
 import io.github.omkartenkale.ktor_role_based_auth.withRole
@@ -13,6 +14,7 @@ fun Application.configureRoutes() {
     routing {
         authRoutes()
         userRoutes()
+        adminRoutes()
 
         authenticate("session") {
             withRole("user") {
