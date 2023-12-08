@@ -7,7 +7,7 @@ import cz.upce.bvwa2.models.UserResponse
 data class User(
     val firstName: String,
     val lastName: String,
-    val password: String?,
+    val password: String,
     val img: ByteArray?,
     var role: String,
     val nickName: String,
