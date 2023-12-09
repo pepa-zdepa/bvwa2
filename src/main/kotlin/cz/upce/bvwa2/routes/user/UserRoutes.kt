@@ -74,7 +74,6 @@ fun Route.userRoutes() {
     authenticate("session") {
         get<User> {
             val userId = call.principal<UserPrincipal>()!!.userId
-
             val userResponse = userRepository.getUser(userId)
             call.respond(userResponse)
         }
@@ -103,24 +102,24 @@ fun Route.userRoutes() {
         }
 
         post<User.Messages> {
-            val userId = call.principal<UserPrincipal>()!!.userId
+            val userId = call.principal<UserPrincipal>()!!.userId.toString()
             val message = call.receive<MessageRequest>()
 
-            messageRepository.add(userId, message)
+            messageRepository.add(userId.toLong(), message)
             call.respond(it.direction)
         }
 
         get<User.Messages.ById> {
-            val userId = call.principal<UserPrincipal>()!!.userId
+            val userId = call.principal<UserPrincipal>()!!.userId.toString()
             val messageId = it.messageId
 
-            val message = messageRepository.getById(messageId.toLong(), userId)
+            val message = messageRepository.getById(messageId.toLong(), userId.toLong())
             call.respond(message)
         }
 
         post<User.Messages.ById.Seen> {
-            val userId = call.principal<UserPrincipal>()!!.userId
-            messageRepository.updateMessageSeen(it.parent.messageId.toLong(), userId)
+            val userId = call.principal<UserPrincipal>()!!.userId.toString()
+            messageRepository.updateMessageSeen(it.parent.messageId.toLong(), userId.toLong())
 
             call.respond(it.parent.messageId)
         }
@@ -139,12 +138,12 @@ fun Route.userRoutes() {
         }
 
         post<User.UploadImage> {
-            val userId = call.principal<UserPrincipal>()!!.userId
+            val userId = call.principal<UserPrincipal>()!!.userId.toString()
             val stream = call.receiveChannel().toInputStream()
 
 //            Validator.validateImage(stream)
             val image = ImageConverter.convertImage(stream)
-            userRepository.uploadImg(userId, image)
+            userRepository.uploadImg(userId.toLong(), image)
 
             call.respond(HttpStatusCode.OK)
         }
@@ -155,7 +154,9 @@ fun Route.userRoutes() {
 
         // vrací počet nepřečtených zpráv
         get<User.Messages.Unread> {
-            call.respond(Random.nextInt(0..5))
+            val userId = call.principal<UserPrincipal>()!!.userId.toString()
+            val number = messageRepository.getUnseenMessages(userId.toLong())
+            call.respond(number)
         }
     }
 }

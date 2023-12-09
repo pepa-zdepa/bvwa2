@@ -58,6 +58,12 @@ class MessagesDao(
         }
     }
 
+    override fun numberOfUnseenMessages(from: String, to: String): Int {
+        return Messages
+            .select { (Messages.to eq from or (Messages.from eq to)) and (Messages.seen eq false) }
+            .count().toInt()
+    }
+
     private fun mapRowToEntity(row: ResultRow) : Message {
         val message = Message(
             encryption.decrypt(row[Messages.subject]),

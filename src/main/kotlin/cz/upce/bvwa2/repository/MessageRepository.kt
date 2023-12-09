@@ -13,14 +13,13 @@ class MessageRepository(
     private val messagesDao: IMessagesDao
 ) {
     fun add(userId: Long, messageRequest: MessageRequest) = transaction {
-        val userFrom = userDao.getById(userId)?.nickName
-            ?: throw PersistenceException("uživatel s tímto id neexistuje")
+        val userFrom = userDao.getById(userId)?.nickName!!
 
         messagesDao.add(Message.fromRequest(messageRequest, userFrom))
     }
 
     fun getById(messageId: Long, userId: Long): MessageResponse = transaction {
-        val message = messagesDao.getById(messageId) ?: throw PersistenceException("zpráva s tímto id neexistuje")
+        val message = messagesDao.getById(messageId)!!
         if (checkUser(message, userId)) {
             Message.toResponse(message)
         } else {
@@ -34,7 +33,7 @@ class MessageRepository(
     }
 
     fun updateMessageSeen(messageId: Long, userId: Long) = transaction {
-        val message = messagesDao.getById(messageId) ?: throw PersistenceException("uživatel s tímto id neexistuje")
+        val message = messagesDao.getById(messageId) !!
         if (checkUser(message, userId)) {
             messagesDao.updateMessageSeen(messageId)
         } else {
@@ -44,6 +43,12 @@ class MessageRepository(
     fun checkUser(message: Message, userId: Long): Boolean {
         val user = userDao.getById(userId) ?: throw PersistenceException("uživatel s tímto id neexistuje")
         return user.nickName == message.to || user.nickName == message.from
+    }
+
+    fun getUnseenMessages(userId: Long): Int = transaction {
+        val userFrom = userDao.getById(userId)?.nickName!!
+        val userTo = userDao.getById(userId)?.nickName!!
+        messagesDao.numberOfUnseenMessages(userFrom, userTo)
     }
 
 

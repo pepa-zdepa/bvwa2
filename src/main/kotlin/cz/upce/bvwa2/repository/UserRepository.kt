@@ -7,9 +7,7 @@ import cz.upce.bvwa2.database.dao.IUserDao
 import cz.upce.bvwa2.database.model.Gender
 import cz.upce.bvwa2.database.model.Role
 import cz.upce.bvwa2.database.model.User
-import cz.upce.bvwa2.models.CreateUserRequest
-import cz.upce.bvwa2.models.UpdateUserRequest
-import cz.upce.bvwa2.models.UserResponse
+import cz.upce.bvwa2.models.*
 import cz.upce.bvwa2.utils.IdConverter
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -44,7 +42,17 @@ class UserRepository(
         val userById = userDao.getById(userId)
         if (userById != null) {
             val role = userById.role
-            User.fromRequestUp(createUserRequest, role)?.let { userDao.update(userId, it) }
+            User.fromRequestUp(createUserRequest, role, userById.nickName, userById.password)?.let { userDao.update(userId, it) }
+        } else {
+            throw PersistenceException("uživatel s tímto id neexistuje")
+        }
+    }
+
+    fun updateByAdmin(userId: Long, createUserRequest: UpdateUserRequestbyAdmin) = transaction {
+        val userById = userDao.getById(userId)
+        if (userById != null) {
+            User.fromRequestUpByAdmin(createUserRequest, userById.nickName, userById.password)?.let { userDao.update(userId, it) }
+            userDao.updateRole(userId, createUserRequest.role)
         } else {
             throw PersistenceException("uživatel s tímto id neexistuje")
         }
@@ -79,8 +87,8 @@ class UserRepository(
         userDao.updateRole(id, role)
     }
 
-    fun getAllUsers(): List<UserResponse> = transaction {
-        userDao.getAll().map { User.toResponse(it) }
+    fun getAllUsers(): List<UserResponseAdmin> = transaction {
+        userDao.getAll().map { User.toResponseAdmin(it, idConverter.encode(it.id)) }
     }
 
     fun getUserById(id: Long): UserResponse = transaction {
