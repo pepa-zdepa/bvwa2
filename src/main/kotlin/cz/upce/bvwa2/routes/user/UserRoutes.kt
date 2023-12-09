@@ -23,6 +23,8 @@ import io.ktor.server.routing.*
 import io.ktor.utils.io.jvm.javaio.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 @Resource("/user")
 class User {
@@ -33,6 +35,9 @@ class User {
             @Resource("/seen")
             class Seen(val parent: ById = ById())
         }
+
+        @Resource("/unread")
+        class Unread(val parent: Messages = Messages())
     }
 
     @Resource("/update-password")
@@ -146,6 +151,11 @@ fun Route.userRoutes() {
 
         get<User.Roles> {
             call.respond(userRepository.getAllRoles())
+        }
+
+        // vrací počet nepřečtených zpráv
+        get<User.Messages.Unread> {
+            call.respond(Random.nextInt(0..5))
         }
     }
 }
