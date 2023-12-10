@@ -28,7 +28,7 @@ class MessageRepository(
 
     }
 
-    fun getAllMessages(userId: Long): List<MessageResponse> = transaction {
+    fun getAllMessages(userId: Long): List<MessageResponse>  = transaction {
         messagesDao.getByUserId(userId).map { Message.toResponse(it) }
     }
 

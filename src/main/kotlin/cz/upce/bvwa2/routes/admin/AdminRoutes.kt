@@ -21,10 +21,10 @@ class Admin {
     @Resource("/user/{id}")
     data class User(val parent: Admin = Admin(), val id: String = "") {
         @Resource("/role")
-        data class Role(val parent: User = User(), val newRole: String)
+        data class Role(val parent: User = User())
 
         @Resource("/update-password")
-        data class Password(val parent: User = User(), val newPassword: String)
+        data class Password(val parent: User = User())
     }
 
     @Resource("/users")
@@ -37,7 +37,7 @@ fun Route.adminRoutes() {
 
     put<Admin.User.Role> {
         val userId = idConverter.decode(it.parent.id)
-        val role = it.newRole
+        val role = call.receive<String>()
 
         userRepository.updateRole(userId, role)
 
@@ -62,8 +62,8 @@ fun Route.adminRoutes() {
     }
 
     put<Admin.User.Password> {
-        val userId = call.principal<UserPrincipal>()!!.userId
-        val password = it.newPassword
+        val userId = idConverter.decode(it.parent.id)
+        val password = call.receive<String>()
 
         userRepository.updatePassword(userId, password)
 
