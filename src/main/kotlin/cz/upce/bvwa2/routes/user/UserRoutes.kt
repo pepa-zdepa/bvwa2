@@ -123,16 +123,20 @@ fun Route.userRoutes() {
         }
 
         get<User.Image> {
-            val userId = idConverter.decode(it.id)
+            try {
+                val userId = idConverter.decode(it.id)
+                val img = userRepository.getImg(userId)
 
-            val img = userRepository.getImg(userId)
+                call.caching = CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 600))
+                call.response.header(HttpHeaders.ContentType, "image/jpeg")
+                call.respondBytes(img)
+            } catch (e: Exception) {
+                val img = Application::class.java.getResourceAsStream("/empty.jpg")?.readBytes() ?: ByteArray(0)
 
-//        val image = File("test.tiff")
-//        val img = ImageConverter.convertImage(image.inputStream())
-
-            call.caching = CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 600))
-            call.response.header(HttpHeaders.ContentType, "image/jpeg")
-            call.respondBytes(img)
+                call.caching = CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 600))
+                call.response.header(HttpHeaders.ContentType, "image/jpeg")
+                call.respondBytes(img)
+            }
         }
 
         post<User.UploadImage> {
