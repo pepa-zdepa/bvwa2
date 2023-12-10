@@ -19,44 +19,47 @@ fun Application.configureRequestValidation() {
     install(RequestValidation) {
         validate<CreateUserRequest> { user ->
             if (!Validator.validatePassword(user.password))
-                ValidationResult.Invalid("Neplatné heslo")
+                return@validate ValidationResult.Invalid("Neplatné heslo")
             if (!Validator.validateEmail(user.email))
-                ValidationResult.Invalid("Neplatný email")
+                return@validate ValidationResult.Invalid("Neplatný email")
             if (!Validator.validatePhone(user.phone))
-                ValidationResult.Invalid("Neplatný telefon")
+                return@validate ValidationResult.Invalid("Neplatný telefon")
             if (!Validator.validateUsername(user.user))
-                ValidationResult.Invalid("Neplatné uživatelské jméno")
+                return@validate ValidationResult.Invalid("Neplatné uživatelské jméno")
             if (!Validator.notEmpty(user.firstName))
-                ValidationResult.Invalid("Neplatné jméno")
+                return@validate ValidationResult.Invalid("Neplatné jméno")
             if (!Validator.notEmpty(user.lastName))
-                ValidationResult.Invalid("Neplatné příjmení")
+                return@validate ValidationResult.Invalid("Neplatné příjmení")
             if (user.gender !in genders)
-                ValidationResult.Invalid("Neplatné pohlaví")
-            else ValidationResult.Valid
+                return@validate ValidationResult.Invalid("Neplatné pohlaví")
+
+            return@validate ValidationResult.Valid
         }
 
         validate<UpdateUserRequest> { user ->
             if (!Validator.validateEmail(user.email))
-                ValidationResult.Invalid("Neplatný email")
+                return@validate ValidationResult.Invalid("Neplatný email")
             if (!Validator.validatePhone(user.phone))
-                ValidationResult.Invalid("Neplatný telefon")
+                return@validate ValidationResult.Invalid("Neplatný telefon")
             if (!Validator.notEmpty(user.firstName))
-                ValidationResult.Invalid("Prázdné jméno")
+                return@validate ValidationResult.Invalid("Prázdné jméno")
             if (!Validator.notEmpty(user.lastName))
-                ValidationResult.Invalid("Prázdné příjmení")
+                return@validate ValidationResult.Invalid("Prázdné příjmení")
             if (user.gender !in genders)
-                ValidationResult.Invalid("Neplatné pohlaví")
-            else ValidationResult.Valid
+                return@validate ValidationResult.Invalid("Neplatné pohlaví")
+
+            return@validate ValidationResult.Valid
         }
 
         validate<MessageRequest> { message ->
             if (!Validator.notEmpty(message.message))
-                ValidationResult.Invalid("Prázdná zpráva")
+                return@validate ValidationResult.Invalid("Prázdná zpráva")
             if (!Validator.notEmpty(message.subject))
-                ValidationResult.Invalid("Prázdný předmět")
+                return@validate ValidationResult.Invalid("Prázdný předmět")
             if (!Validator.notEmpty(message.to))
-                ValidationResult.Invalid("Prázdný adresát")
-            else ValidationResult.Valid
+                return@validate ValidationResult.Invalid("Prázdný adresát")
+
+            return@validate ValidationResult.Valid
         }
     }
 }
