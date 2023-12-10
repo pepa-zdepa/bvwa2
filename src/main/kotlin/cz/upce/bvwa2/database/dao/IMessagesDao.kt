@@ -16,4 +16,6 @@ interface IMessagesDao {
     fun add(message: Message)
 
     fun numberOfUnseenMessages(to: String): Int
+
+    fun delete(nickName: String)
 }

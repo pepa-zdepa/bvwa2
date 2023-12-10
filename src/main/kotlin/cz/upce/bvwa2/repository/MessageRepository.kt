@@ -6,11 +6,13 @@ import cz.upce.bvwa2.database.dao.IUserDao
 import cz.upce.bvwa2.database.model.Message
 import cz.upce.bvwa2.models.MessageRequest
 import cz.upce.bvwa2.models.MessageResponse
+import cz.upce.bvwa2.utils.IdConverter
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class MessageRepository(
     private val userDao: IUserDao,
-    private val messagesDao: IMessagesDao
+    private val messagesDao: IMessagesDao,
+    private val idConverter: IdConverter
 ) {
     fun add(userId: Long, messageRequest: MessageRequest) = transaction {
         val userFrom = userDao.getById(userId)?.nickName!!
@@ -21,7 +23,7 @@ class MessageRepository(
     fun getById(messageId: Long, userId: Long): MessageResponse = transaction {
         val message = messagesDao.getById(messageId)!!
         if (checkUser(message, userId)) {
-            Message.toResponse(message)
+            Message.toResponse(message, idConverter.encode(message.id))
         } else {
             throw PersistenceException("uživatel s tímto id nemá právo přečíct email")
         }
@@ -29,7 +31,7 @@ class MessageRepository(
     }
 
     fun getAllMessages(userId: Long): List<MessageResponse>  = transaction {
-        messagesDao.getByUserId(userId).map { Message.toResponse(it) }
+        messagesDao.getByUserId(userId).map { Message.toResponse(it, idConverter.encode(it.id)) }
     }
 
     fun updateMessageSeen(messageId: Long, userId: Long) = transaction {

@@ -30,8 +30,9 @@ data class Message(
             )
         }
 
-        fun toResponse(message: Message): MessageResponse {
+        fun toResponse(message: Message, messageId: String): MessageResponse {
             return MessageResponse(
+                id = messageId,
                 subject = message.subject,
                 from = message.from,
                 to = message.to,

@@ -104,22 +104,22 @@ fun Route.userRoutes() {
             val message = call.receive<MessageRequest>()
 
             messageRepository.add(userId, message)
-            call.respond(it.direction)
+            call.respond(HttpStatusCode.OK)
         }
 
         get<User.Messages.ById> {
             val userId = call.principal<UserPrincipal>()!!.userId
-            val messageId = it.messageId
+            val messageId = idConverter.decode(it.messageId)
 
-            val message = messageRepository.getById(messageId.toLong(), userId)
+            val message = messageRepository.getById(messageId, userId)
             call.respond(message)
         }
 
         post<User.Messages.ById.Seen> {
             val userId = call.principal<UserPrincipal>()!!.userId
-            messageRepository.updateMessageSeen(it.parent.messageId.toLong(), userId)
+            messageRepository.updateMessageSeen(idConverter.decode(it.parent.messageId), userId)
 
-            call.respond(it.parent.messageId)
+            call.respond(HttpStatusCode.OK)
         }
 
         get<User.Image> {

@@ -2,6 +2,7 @@ package cz.upce.bvwa2.repository
 
 import cz.upce.bvwa2.database.PersistenceException
 import cz.upce.bvwa2.database.dao.IGenderDao
+import cz.upce.bvwa2.database.dao.IMessagesDao
 import cz.upce.bvwa2.database.dao.IRoleDao
 import cz.upce.bvwa2.database.dao.IUserDao
 import cz.upce.bvwa2.database.model.User
@@ -13,6 +14,7 @@ class UserRepository(
     private val userDao: IUserDao,
     private val roleDao: IRoleDao,
     private val genderDao: IGenderDao,
+    private val messagesDao: IMessagesDao,
     private val idConverter: IdConverter
 ) {
     fun add(createUserRequest: CreateUserRequest) = transaction {
@@ -78,7 +80,10 @@ class UserRepository(
     }
 
     fun delete(userId: Long) = transaction {
+        val user = userDao.getById(userId)
         userDao.delete(userId)
+        user?.let { messagesDao.delete(it.nickName) }
+
     }
 
     fun updateRole(id: Long, role: String) = transaction{

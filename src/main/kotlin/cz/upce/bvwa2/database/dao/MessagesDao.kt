@@ -5,6 +5,7 @@ import cz.upce.bvwa2.database.encryption.Encryption
 import cz.upce.bvwa2.database.model.Message
 import cz.upce.bvwa2.database.table.Messages
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class MessagesDao(
     private val encryption: Encryption,
@@ -62,6 +63,14 @@ class MessagesDao(
         return Messages
             .select { (Messages.to eq to) and (Messages.seen eq false) }
             .count().toInt()
+    }
+
+    override fun delete(nickName: String) {
+        try {
+            Messages.deleteWhere { (to eq nickName) or  (from eq nickName)}
+        } catch (e: Exception) {
+            throw PersistenceException("Chyba při mazání zpráv v databázi", e)
+        }
     }
 
     private fun mapRowToEntity(row: ResultRow) : Message {
