@@ -5,7 +5,9 @@ import cz.upce.bvwa2.models.MessageResponse
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
+// Datová třída Message reprezentuje zprávy mezi uživateli.
 data class Message(
+    // Atributy zprávy
     val subject: String,
     val from: String,
     val to: String,
@@ -14,10 +16,11 @@ data class Message(
     val responseTo: Long?,
     val seen: Boolean
 ) {
+    // Unikátní ID zprávy
     var id: Long = 0
 
     companion object {
-
+        // Pomocné metody pro konverzi mezi různými reprezentacemi zprávy.
         fun fromRequest(requestMessage: MessageRequest, nickName: String): Message {
             return Message(
                 subject = requestMessage.subject,
@@ -25,7 +28,7 @@ data class Message(
                 to = requestMessage.to,
                 message = requestMessage.message,
                 time = Clock.System.now(),
-                responseTo = requestMessage.responseTo?.toLongOrNull(), // TODO
+                responseTo = requestMessage.responseTo?.toLongOrNull(),
                 seen = false
             )
         }
@@ -38,7 +41,7 @@ data class Message(
                 to = message.to,
                 message = message.message,
                 time = message.time,
-                responseTo = message.responseTo.toString(), // TODO
+                responseTo = message.responseTo.toString(),
                 seen = message.seen
             )
         }

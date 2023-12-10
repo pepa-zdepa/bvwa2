@@ -10,13 +10,16 @@ import cz.upce.bvwa2.models.*
 import cz.upce.bvwa2.utils.IdConverter
 import org.jetbrains.exposed.sql.transactions.transaction
 
+// Třída UserRepository spravuje operace spojené s uživateli v databázi.
 class UserRepository(
+    // DAO (Data Access Objects) pro různé operace spojené s uživateli, rolemi, pohlavím a zprávami.
     private val userDao: IUserDao,
     private val roleDao: IRoleDao,
     private val genderDao: IGenderDao,
     private val messagesDao: IMessagesDao,
     private val idConverter: IdConverter
 ) {
+    // Přidání nového uživatele do databáze.
     fun add(createUserRequest: CreateUserRequest) = transaction {
         if (!doesUserExist(createUserRequest.user)) {
             userDao.add(User.fromRequest(createUserRequest))
@@ -25,6 +28,7 @@ class UserRepository(
         }
     }
 
+    // Získání informací o uživateli podle jeho ID.
     fun getUser(userId: Long): UserResponse = transaction {
         try {
             val user = userDao.getById(userId)
@@ -34,10 +38,12 @@ class UserRepository(
         }
     }
 
+    // Získání uživatele podle jeho přezdívky.
     fun getUserByNickname(nickname: String): User? = transaction {
         userDao.getByNickname(nickname)
     }
 
+    // Aktualizace informací o uživateli.
     fun update(userId: Long, createUserRequest: UpdateUserRequest) = transaction {
         val userById = userDao.getById(userId)
         if (userById != null) {
@@ -48,6 +54,7 @@ class UserRepository(
         }
     }
 
+    // Aktualizace informací o uživateli adminem.
     fun updateByAdmin(userId: Long, createUserRequest: UpdateUserRequestbyAdmin) = transaction {
         val userById = userDao.getById(userId)
         if (userById != null) {
@@ -58,6 +65,7 @@ class UserRepository(
         }
     }
 
+    // Nahrání obrázku uživatele.
     fun uploadImg(id: Long, img: ByteArray) = transaction {
         try {
             userDao.uploadImg(id, img)
@@ -66,6 +74,7 @@ class UserRepository(
         }
     }
 
+    // Aktualizace hesla uživatele.
     fun updatePassword(id: Long, password: String) = transaction {
         try {
             userDao.updatePassword(id, password)
@@ -74,11 +83,13 @@ class UserRepository(
         }
     }
 
+    // Získání obrázku uživatele.
     fun getImg(id: Long): ByteArray = transaction {
         val user = userDao.getById(id)
         user?.img ?: throw PersistenceException("uživatel s tímto id neexistuje")
     }
 
+    // Odstranění uživatele z databáze.
     fun delete(userId: Long) = transaction {
         val user = userDao.getById(userId)
         userDao.delete(userId)
@@ -86,25 +97,32 @@ class UserRepository(
 
     }
 
+    // Aktualizace role uživatele.
     fun updateRole(id: Long, role: String) = transaction{
         userDao.updateRole(id, role)
     }
 
+    // Získání seznamu všech uživatelů.
     fun getAllUsers(): List<UserResponseAdmin> = transaction {
         userDao.getAll().map { User.toResponseAdmin(it, idConverter.encode(it.id)) }
     }
 
+    // Získání uživatele podle ID.
     fun getUserById(id: Long): UserResponse = transaction {
         User.toResponse(userDao.getById(id) ?: throw PersistenceException("uživatel s tímto id neexistuje"))
     }
+
+    // Ověření, zda uživatel existuje.
     fun doesUserExist(userNickName: String): Boolean{
         return userDao.getByNickname(userNickName) != null
     }
 
+    // Získání seznamu všech rolí.
     fun getAllRoles(): List<String> = transaction {
         roleDao.getAll()
     }
 
+    // Získání seznamu všech pohlaví.
     fun getAllGenders(): List<String> = transaction {
         genderDao.getAll()
     }

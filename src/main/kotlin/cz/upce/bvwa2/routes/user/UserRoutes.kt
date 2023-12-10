@@ -54,28 +54,34 @@ class User {
     class Roles(val parent: User = User())
 }
 
+// Třída UserRoutes definuje cesty pro uživatelské operace v rámci API.
 fun Route.userRoutes() {
     val userRepository by closestDI().instance<UserRepository>()
     val idConverter by closestDI().instance<IdConverter>()
     val messageRepository by closestDI().instance<MessageRepository>()
 
+    // Registrace uživatele.
     post<User> {
         val requestUser = call.receive<CreateUserRequest>()
         userRepository.add(requestUser)
         call.respond(HttpStatusCode.OK)
     }
 
+    // Získání seznamu všech pohlaví.
     get<User.Genders> {
         call.respond(userRepository.getAllGenders())
     }
 
+    // Autentikované operace.
     authenticate("session") {
+        // Získání informací o aktuálně přihlášeném uživateli.
         get<User> {
             val userId = call.principal<UserPrincipal>()!!.userId
             val userResponse = userRepository.getUser(userId)
             call.respond(userResponse)
         }
 
+        // Aktualizace informací o aktuálně přihlášeném uživateli.
         put<User> {
             val userId = call.principal<UserPrincipal>()!!.userId
             val requestUser = call.receive<UpdateUserRequest>()
@@ -84,6 +90,7 @@ fun Route.userRoutes() {
             call.respond(HttpStatusCode.OK)
         }
 
+        // Aktualizace hesla aktuálně přihlášeného uživatele.
         put<User.UpdatePassword> {
             val userId = call.principal<UserPrincipal>()!!.userId
             val password = call.receive<String>()
@@ -92,6 +99,7 @@ fun Route.userRoutes() {
             call.respond(HttpStatusCode.OK)
         }
 
+        // Získání seznamu zpráv pro aktuálně přihlášeného uživatele.
         get<User.Messages> {
             val userId = call.principal<UserPrincipal>()!!.userId
             val messages = messageRepository.getAllMessages(userId)
@@ -99,6 +107,7 @@ fun Route.userRoutes() {
             call.respond(messages)
         }
 
+        // Odeslání zprávy pro aktuálně přihlášeného uživatele.
         post<User.Messages> {
             val userId = call.principal<UserPrincipal>()!!.userId
             val message = call.receive<MessageRequest>()
@@ -107,6 +116,7 @@ fun Route.userRoutes() {
             call.respond(HttpStatusCode.OK)
         }
 
+        // Získání konkrétní zprávy podle ID.
         get<User.Messages.ById> {
             val userId = call.principal<UserPrincipal>()!!.userId
             val messageId = idConverter.decode(it.messageId)
@@ -115,6 +125,7 @@ fun Route.userRoutes() {
             call.respond(message)
         }
 
+        // Označení zprávy jako přečtené.
         post<User.Messages.ById.Seen> {
             val userId = call.principal<UserPrincipal>()!!.userId
             messageRepository.updateMessageSeen(idConverter.decode(it.parent.messageId), userId)
@@ -122,6 +133,7 @@ fun Route.userRoutes() {
             call.respond(HttpStatusCode.OK)
         }
 
+        // Získání obrázku uživatele.
         get<User.Image> {
             val userId = idConverter.decode(it.id)
 
@@ -135,6 +147,7 @@ fun Route.userRoutes() {
             call.respondBytes(img)
         }
 
+        // Nahrání obrázku aktuálně přihlášeného uživatele.
         post<User.UploadImage> {
             val userId = call.principal<UserPrincipal>()!!.userId
             val stream = call.receiveChannel().toInputStream()
@@ -146,11 +159,12 @@ fun Route.userRoutes() {
             call.respond(HttpStatusCode.OK)
         }
 
+        // Získání seznamu všech rolí.
         get<User.Roles> {
             call.respond(userRepository.getAllRoles())
         }
 
-        // vrací počet nepřečtených zpráv
+        // Získání počtu nepřečtených zpráv.
         get<User.Messages.Unread> {
             val userId = call.principal<UserPrincipal>()!!.userId
             val number = messageRepository.getUnseenMessages(userId)

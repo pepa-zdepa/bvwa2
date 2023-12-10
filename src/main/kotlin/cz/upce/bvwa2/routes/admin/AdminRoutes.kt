@@ -31,10 +31,12 @@ class Admin {
     data class Users(val parent: Admin = Admin())
 }
 
+// Třída AdminRoutes definuje administrační cesty (endpoints) pro správu uživatelů.
 fun Route.adminRoutes() {
     val userRepository by closestDI().instance<UserRepository>()
     val idConverter by closestDI().instance<IdConverter>()
 
+    // Aktualizace role uživatele.
     put<Admin.User.Role> {
         val userId = idConverter.decode(it.parent.id)
         val role = call.receive<String>()
@@ -44,6 +46,7 @@ fun Route.adminRoutes() {
         call.respond(HttpStatusCode.OK)
     }
 
+    // Získání detailů konkrétního uživatele.
     get<Admin.User> {
         val userId = idConverter.decode(it.id)
 
@@ -52,6 +55,7 @@ fun Route.adminRoutes() {
         call.respond(user)
     }
 
+    // Aktualizace informací o uživateli adminem.
     put<Admin.User> {
         val userId = idConverter.decode(it.id)
         val user = call.receive<UpdateUserRequestbyAdmin>()
@@ -61,6 +65,7 @@ fun Route.adminRoutes() {
         call.respond(HttpStatusCode.OK)
     }
 
+    // Aktualizace hesla uživatele adminem.
     put<Admin.User.Password> {
         val userId = idConverter.decode(it.parent.id)
         val password = call.receive<String>()
@@ -70,6 +75,7 @@ fun Route.adminRoutes() {
         call.respond(HttpStatusCode.OK)
     }
 
+    // Odstranění uživatele.
     delete<Admin.User> {
         val userId = idConverter.decode(it.id)
         userRepository.delete(userId)
@@ -77,6 +83,7 @@ fun Route.adminRoutes() {
         call.respond(HttpStatusCode.OK)
     }
 
+    // Získání seznamu všech uživatelů.
     get<Admin.Users> {
         val users = userRepository.getAllUsers()
 

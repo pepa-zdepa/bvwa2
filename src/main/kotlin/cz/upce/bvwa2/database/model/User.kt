@@ -2,7 +2,9 @@ package cz.upce.bvwa2.database.model
 
 import cz.upce.bvwa2.models.*
 
+// Datová třída User reprezentuje uživatele.
 data class User(
+    // Atributy uživatele.
     val firstName: String,
     val lastName: String,
     val password: String,
@@ -13,9 +15,11 @@ data class User(
     val gender: String,
     val phoneNumber: String
 ) {
+    // Unikátní ID uživatele.
     var id: Long = 0
 
     companion object {
+        // Pomocné metody pro konverzi mezi různými reprezentacemi uživatele.
         fun fromRequest(requestUser: CreateUserRequest): User {
             return User(
                 firstName = requestUser.firstName,
