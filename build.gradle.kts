@@ -65,6 +65,7 @@ dependencies {
     implementation("io.ktor:ktor-server-http-redirect:$ktor_version")
     implementation("io.ktor:ktor-server-caching-headers:$ktor_version")
     implementation("io.ktor:ktor-server-request-validation:$ktor_version")
+    implementation("io.ktor:ktor-server-cors:$ktor_version")
 
     // Validation
     implementation("commons-validator:commons-validator:1.8.0")
@@ -95,6 +96,7 @@ dependencies {
     implementation("com.sksamuel.hoplite:hoplite-core:$hoplite_version")
     implementation("com.sksamuel.hoplite:hoplite-hocon:$hoplite_version")
     implementation("io.ktor:ktor-server-http-redirect-jvm:2.3.6")
+    implementation("io.ktor:ktor-server-cors-jvm:2.3.6")
 
     // Tests
     testImplementation(kotlin("test"))
