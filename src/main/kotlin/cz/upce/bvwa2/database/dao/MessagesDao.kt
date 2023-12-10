@@ -27,7 +27,10 @@ class MessagesDao(
 
     // Získání zpráv podle ID uživatele.
     override fun getByUserId(id: Long): List<Message> {
-        return Messages.selectAll().map(::mapRowToEntity)
+        return Messages
+            .selectAll()
+            .orderBy(Messages.time, SortOrder.DESC)
+            .map(::mapRowToEntity)
     }
 
     // Získání zpráv mezi dvěma uživateli.

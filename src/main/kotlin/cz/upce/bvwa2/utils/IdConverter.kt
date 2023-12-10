@@ -7,5 +7,7 @@ class IdConverter(alphabet: String, minLength: Int = 10) {
 
     fun encode(id: Long): String = sqids.encode(listOf(id))
 
+    fun encode(id: Long?): String? = id?.let { encode(it) }
+
     fun decode(id: String): Long = sqids.decode(id).first()
 }

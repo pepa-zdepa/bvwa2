@@ -103,7 +103,7 @@ fun Route.userRoutes() {
         // Získání seznamu zpráv pro aktuálně přihlášeného uživatele.
         get<User.Messages> {
             val userId = call.principal<UserPrincipal>()!!.userId
-            val messages = messageRepository.getAllMessages(userId)
+            val messages = messageRepository.getAllMessages(userId, it.direction)
 
             call.respond(messages)
         }

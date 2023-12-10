@@ -21,19 +21,19 @@ data class Message(
 
     companion object {
         // Pomocné metody pro konverzi mezi různými reprezentacemi zprávy.
-        fun fromRequest(requestMessage: MessageRequest, nickName: String): Message {
+        fun fromRequest(requestMessage: MessageRequest, nickName: String, responseTo: Long?): Message {
             return Message(
                 subject = requestMessage.subject,
                 from = nickName,
                 to = requestMessage.to,
                 message = requestMessage.message,
                 time = Clock.System.now(),
-                responseTo = requestMessage.responseTo?.toLongOrNull(),
+                responseTo = responseTo,
                 seen = false
             )
         }
 
-        fun toResponse(message: Message, messageId: String): MessageResponse {
+        fun toResponse(message: Message, messageId: String, responseTo: String?): MessageResponse {
             return MessageResponse(
                 id = messageId,
                 subject = message.subject,
@@ -41,7 +41,7 @@ data class Message(
                 to = message.to,
                 message = message.message,
                 time = message.time,
-                responseTo = message.responseTo.toString(),
+                responseTo = responseTo,
                 seen = message.seen
             )
         }

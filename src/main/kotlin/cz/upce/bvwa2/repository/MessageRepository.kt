@@ -19,15 +19,21 @@ class MessageRepository(
     // Přidání nové zprávy do databáze.
     fun add(userId: Long, messageRequest: MessageRequest) = transaction {
         val userFrom = userDao.getById(userId)?.nickName!!
+        val responseTo = messageRequest.responseTo?.let { idConverter.decode(it) }
 
-        messagesDao.add(Message.fromRequest(messageRequest, userFrom))
+        if (userDao.getAll().none { it.nickName == messageRequest.to })
+            throw PersistenceException("Uživatel ${messageRequest.to} neexistuje")
+
+        messagesDao.add(Message.fromRequest(messageRequest, userFrom, responseTo))
     }
 
     // Získání zprávy podle jejího ID a ověření, zda má uživatel právo ji přečíst.
     fun getById(messageId: Long, userId: Long): MessageResponse = transaction {
         val message = messagesDao.getById(messageId)!!
+        val responseTo = message.responseTo?.let { idConverter.encode(it) }
+
         if (checkUser(message, userId)) {
-            Message.toResponse(message, idConverter.encode(message.id))
+            Message.toResponse(message, idConverter.encode(message.id), responseTo)
         } else {
             throw PersistenceException("uživatel s tímto id nemá právo přečíct email")
         }
@@ -35,8 +41,18 @@ class MessageRepository(
     }
 
     // Získání všech zpráv pro uživatele.
-    fun getAllMessages(userId: Long): List<MessageResponse>  = transaction {
-        messagesDao.getByUserId(userId).map { Message.toResponse(it, idConverter.encode(it.id)) }
+    fun getAllMessages(userId: Long, direction: String): List<MessageResponse>  = transaction {
+        val user = userDao.getById(userId) ?: throw PersistenceException("uživatel s tímto id neexistuje")
+
+        messagesDao.getByUserId(userId)
+            .map { Message.toResponse(it, idConverter.encode(it.id), idConverter.encode(it.responseTo)) }
+            .filter {
+                when {
+                    direction == "in" && it.to == user.nickName ->  true
+                    direction == "out" && it.from == user.nickName -> true
+                    else -> false
+                }
+            }
     }
 
     // Aktualizace stavu zprávy (označení jako přečtené) pro uživatele.
@@ -60,6 +76,4 @@ class MessageRepository(
         val userTo = userDao.getById(userId)?.nickName!!
         messagesDao.numberOfUnseenMessages(userTo)
     }
-
-
 }
