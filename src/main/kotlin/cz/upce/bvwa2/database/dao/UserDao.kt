@@ -8,25 +8,32 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 
+// Třída UserDao poskytuje metody pro přístup a manipulaci s uživatelskými daty v databázi.
 class UserDao(
+    // Instance třídy Encryption pro šifrování a dešifrování citlivých dat.
     private val encryption: Encryption,
 ): IUserDao {
+
+    // Získání seznamu všech uživatelů.
     override fun getAll(): List<User> {
         return Users.selectAll().map(::mapRowToEntity)
     }
 
+    // Získání uživatele podle jeho ID.
     override fun getById(id: Long): User? {
         return Users.select { Users.id eq id }
             .map(::mapRowToEntity)
             .singleOrNull()
     }
 
+    // Získání uživatele podle jeho přezdívky.
     override fun getByNickname(nickName: String): User? {
         return Users.select { Users.nickName eq nickName }
             .map(::mapRowToEntity)
             .singleOrNull()
     }
 
+    // Přidání nového uživatele do databáze.
     override fun add(user: User) {
         try {
             Users.insert {
@@ -45,6 +52,7 @@ class UserDao(
         }
     }
 
+    // Aktualizace informací o uživateli.
     override fun update(id: Long, user: User) {
         try {
             Users.update({ Users.id eq id }) {
@@ -59,6 +67,7 @@ class UserDao(
         }
     }
 
+    // Odstranění uživatele z databáze.
     override fun delete(id: Long) {
         try {
             Users.deleteWhere { (Users.id eq id) }
@@ -67,6 +76,7 @@ class UserDao(
         }
     }
 
+    // Nahrání obrázku uživatele.
     override fun uploadImg(id: Long, img: ByteArray) {
         try {
             Users.update({ Users.id eq id }) {
@@ -77,6 +87,7 @@ class UserDao(
         }
     }
 
+    // Aktualizace hesla uživatele.
     override fun updatePassword(id: Long, password: String) {
         try {
             Users.update({ Users.id eq id }) {
@@ -87,6 +98,7 @@ class UserDao(
         }
     }
 
+    // Aktualizace role uživatele.
     override fun updateRole(id: Long, role: String) {
         try {
             Users.update({ Users.id eq id }) {
@@ -97,6 +109,8 @@ class UserDao(
         }
     }
 
+
+    // Privátní metoda pro mapování dat z databáze do objektu User.
     private fun mapRowToEntity(row: ResultRow): User {
         val user = User(
             encryption.decrypt(row[Users.firstName]),

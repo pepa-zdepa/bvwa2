@@ -7,13 +7,17 @@ import cz.upce.bvwa2.database.table.Messages
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
+// Třída MessagesDao poskytuje metody pro přístup a manipulaci se zprávami v databázi.
 class MessagesDao(
+    // Instance třídy Encryption pro šifrování a dešifrování obsahu zpráv.
     private val encryption: Encryption,
 ) : IMessagesDao {
+    // Získání seznamu všech zpráv.
     override fun getAll(): List<Message> {
         return Messages.selectAll().map(::mapRowToEntity)
     }
 
+    // Získání zprávy podle jejího ID.
     override fun getById(id: Long): Message? {
         return Messages
             .select { Messages.id eq id }
@@ -21,10 +25,12 @@ class MessagesDao(
             .singleOrNull()
     }
 
+    // Získání zpráv podle ID uživatele.
     override fun getByUserId(id: Long): List<Message> {
         return Messages.selectAll().map(::mapRowToEntity)
     }
 
+    // Získání zpráv mezi dvěma uživateli.
     override fun getFromTo(from: String, to: String): List<Message> {
         return Messages.selectAll()
             .andWhere { Messages.from eq from }
@@ -32,6 +38,7 @@ class MessagesDao(
             .map(::mapRowToEntity)
     }
 
+    // Aktualizace stavu zprávy (označení jako přečtené).
     override fun updateMessageSeen(id: Long) {
         try {
             Messages.update({ Messages.id eq id }) {
@@ -42,6 +49,7 @@ class MessagesDao(
         }
     }
 
+    // Přidání nové zprávy do databáze.
     override fun add(messageIn: Message) {
         try {
             Messages.insert {
@@ -59,12 +67,14 @@ class MessagesDao(
         }
     }
 
+    // Získání počtu nepřečtených zpráv pro uživatele.
     override fun numberOfUnseenMessages(to: String): Int {
         return Messages
             .select { (Messages.to eq to) and (Messages.seen eq false) }
             .count().toInt()
     }
 
+    // Odstranění zpráv uživatele.
     override fun delete(nickName: String) {
         try {
             Messages.deleteWhere { (to eq nickName) or  (from eq nickName)}
@@ -73,6 +83,7 @@ class MessagesDao(
         }
     }
 
+    // Privátní metoda pro mapování dat z databáze do objektu Message.
     private fun mapRowToEntity(row: ResultRow) : Message {
         val message = Message(
             encryption.decrypt(row[Messages.subject]),
