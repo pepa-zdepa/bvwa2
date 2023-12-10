@@ -8,6 +8,7 @@ import cz.upce.bvwa2.repository.MessageRepository
 import cz.upce.bvwa2.repository.UserRepository
 import cz.upce.bvwa2.utils.IdConverter
 import cz.upce.bvwa2.utils.ImageConverter
+import cz.upce.bvwa2.utils.Validator
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.resources.*
@@ -143,7 +144,12 @@ fun Route.userRoutes() {
             val userId = call.principal<UserPrincipal>()!!.userId
             val stream = call.receiveChannel().toInputStream()
 
-//            Validator.validateImage(stream)
+            if (!Validator.validateImage(stream)) {
+                call.respond(HttpStatusCode.BadRequest, "Chybné rozměry obrázku. Musí být 800xXXX")
+
+                return@post
+            }
+
             val image = ImageConverter.convertImage(stream)
             userRepository.uploadImg(userId, image)
 
