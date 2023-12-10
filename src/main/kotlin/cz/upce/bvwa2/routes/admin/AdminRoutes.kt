@@ -4,7 +4,6 @@ import cz.upce.bvwa2.auth.UserPrincipal
 import cz.upce.bvwa2.models.UpdateUserRequestbyAdmin
 import cz.upce.bvwa2.repository.UserRepository
 import cz.upce.bvwa2.utils.IdConverter
-import io.github.omkartenkale.ktor_role_based_auth.withRole
 import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.application.*
@@ -35,45 +34,52 @@ class Admin {
 fun Route.adminRoutes() {
     val userRepository by closestDI().instance<UserRepository>()
     val idConverter by closestDI().instance<IdConverter>()
-    withRole("admin") {
-/*        put<Admin.User.Role> {
-            val userId = call.principal<UserPrincipal>()!!.userId
-            val role = it.newRole
 
-            userRepository.updateRole(userId, role)
-            call.respond(HttpStatusCode.OK)
-        }*/
+    put<Admin.User.Role> {
+        val userId = idConverter.decode(it.parent.id)
+        val role = it.newRole
 
-        get<Admin.User> {
-            val userId = idConverter.decode(it.id)
-            val user = userRepository.getUserById(userId)
-            call.respond(user)
-        }
+        userRepository.updateRole(userId, role)
 
-        put<Admin.User> {
-            val userId = idConverter.decode(it.id)
-            val user = call.receive<UpdateUserRequestbyAdmin>()
-            userRepository.updateByAdmin(userId, user)
-            call.respond(HttpStatusCode.OK)
-        }
+        call.respond(HttpStatusCode.OK)
+    }
 
-        put<Admin.User.Password> {
-            val userId = call.principal<UserPrincipal>()!!.userId
-            val password = it.newPassword
+    get<Admin.User> {
+        val userId = idConverter.decode(it.id)
 
-            userRepository.updatePassword(userId, password)
-            call.respond(HttpStatusCode.OK)
-        }
+        val user = userRepository.getUserById(userId)
 
-        delete<Admin.User> {
-            val userId = it.id
-            userRepository.delete(idConverter.decode(userId))
-            call.respond(HttpStatusCode.OK)
-        }
+        call.respond(user)
+    }
 
-        get<Admin.Users> {
-            val users = userRepository.getAllUsers()
-            call.respond(users)
-        }
+    put<Admin.User> {
+        val userId = idConverter.decode(it.id)
+        val user = call.receive<UpdateUserRequestbyAdmin>()
+
+        userRepository.updateByAdmin(userId, user)
+
+        call.respond(HttpStatusCode.OK)
+    }
+
+    put<Admin.User.Password> {
+        val userId = call.principal<UserPrincipal>()!!.userId
+        val password = it.newPassword
+
+        userRepository.updatePassword(userId, password)
+
+        call.respond(HttpStatusCode.OK)
+    }
+
+    delete<Admin.User> {
+        val userId = idConverter.decode(it.id)
+        userRepository.delete(userId)
+
+        call.respond(HttpStatusCode.OK)
+    }
+
+    get<Admin.Users> {
+        val users = userRepository.getAllUsers()
+
+        call.respond(users)
     }
 }

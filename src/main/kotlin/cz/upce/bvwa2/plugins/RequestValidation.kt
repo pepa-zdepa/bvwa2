@@ -5,11 +5,17 @@ package cz.upce.bvwa2.plugins
 import cz.upce.bvwa2.models.CreateUserRequest
 import cz.upce.bvwa2.models.MessageRequest
 import cz.upce.bvwa2.models.UpdateUserRequest
+import cz.upce.bvwa2.repository.UserRepository
 import cz.upce.bvwa2.utils.Validator
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*
+import org.kodein.di.instance
+import org.kodein.di.ktor.closestDI
 
 fun Application.configureRequestValidation() {
+    val userRepository by closestDI().instance<UserRepository>()
+    val genders = userRepository.getAllGenders()
+
     install(RequestValidation) {
         validate<CreateUserRequest> { user ->
             if (!Validator.validatePassword(user.password))
@@ -24,7 +30,7 @@ fun Application.configureRequestValidation() {
                 ValidationResult.Invalid("Neplatné jméno")
             if (!Validator.notEmpty(user.lastName))
                 ValidationResult.Invalid("Neplatné příjmení")
-            if (!Validator.notEmpty(user.gender))
+            if (user.gender !in genders)
                 ValidationResult.Invalid("Neplatné pohlaví")
             else ValidationResult.Valid
         }
@@ -38,8 +44,8 @@ fun Application.configureRequestValidation() {
                 ValidationResult.Invalid("Prázdné jméno")
             if (!Validator.notEmpty(user.lastName))
                 ValidationResult.Invalid("Prázdné příjmení")
-            if (!Validator.notEmpty(user.gender))
-                ValidationResult.Invalid("Prázdné pohlaví")
+            if (user.gender !in genders)
+                ValidationResult.Invalid("Neplatné pohlaví")
             else ValidationResult.Valid
         }
 

@@ -23,8 +23,6 @@ import io.ktor.server.routing.*
 import io.ktor.utils.io.jvm.javaio.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
-import kotlin.random.Random
-import kotlin.random.nextInt
 
 @Resource("/user")
 class User {
@@ -102,24 +100,24 @@ fun Route.userRoutes() {
         }
 
         post<User.Messages> {
-            val userId = call.principal<UserPrincipal>()!!.userId.toString()
+            val userId = call.principal<UserPrincipal>()!!.userId
             val message = call.receive<MessageRequest>()
 
-            messageRepository.add(userId.toLong(), message)
+            messageRepository.add(userId, message)
             call.respond(it.direction)
         }
 
         get<User.Messages.ById> {
-            val userId = call.principal<UserPrincipal>()!!.userId.toString()
+            val userId = call.principal<UserPrincipal>()!!.userId
             val messageId = it.messageId
 
-            val message = messageRepository.getById(messageId.toLong(), userId.toLong())
+            val message = messageRepository.getById(messageId.toLong(), userId)
             call.respond(message)
         }
 
         post<User.Messages.ById.Seen> {
-            val userId = call.principal<UserPrincipal>()!!.userId.toString()
-            messageRepository.updateMessageSeen(it.parent.messageId.toLong(), userId.toLong())
+            val userId = call.principal<UserPrincipal>()!!.userId
+            messageRepository.updateMessageSeen(it.parent.messageId.toLong(), userId)
 
             call.respond(it.parent.messageId)
         }
@@ -138,12 +136,12 @@ fun Route.userRoutes() {
         }
 
         post<User.UploadImage> {
-            val userId = call.principal<UserPrincipal>()!!.userId.toString()
+            val userId = call.principal<UserPrincipal>()!!.userId
             val stream = call.receiveChannel().toInputStream()
 
 //            Validator.validateImage(stream)
             val image = ImageConverter.convertImage(stream)
-            userRepository.uploadImg(userId.toLong(), image)
+            userRepository.uploadImg(userId, image)
 
             call.respond(HttpStatusCode.OK)
         }
@@ -154,8 +152,8 @@ fun Route.userRoutes() {
 
         // vrací počet nepřečtených zpráv
         get<User.Messages.Unread> {
-            val userId = call.principal<UserPrincipal>()!!.userId.toString()
-            val number = messageRepository.getUnseenMessages(userId.toLong())
+            val userId = call.principal<UserPrincipal>()!!.userId
+            val number = messageRepository.getUnseenMessages(userId)
             call.respond(number)
         }
     }
