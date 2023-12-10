@@ -8,6 +8,7 @@ import cz.upce.bvwa2.repository.MessageRepository
 import cz.upce.bvwa2.repository.UserRepository
 import cz.upce.bvwa2.utils.IdConverter
 import cz.upce.bvwa2.utils.ImageConverter
+import cz.upce.bvwa2.utils.Validator
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.resources.*
@@ -135,16 +136,20 @@ fun Route.userRoutes() {
 
         // Získání obrázku uživatele.
         get<User.Image> {
-            val userId = idConverter.decode(it.id)
+            try {
+                val userId = idConverter.decode(it.id)
+                val img = userRepository.getImg(userId)
 
-            val img = userRepository.getImg(userId)
+                call.caching = CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 600))
+                call.response.header(HttpHeaders.ContentType, "image/jpeg")
+                call.respondBytes(img)
+            } catch (e: Exception) {
+                val img = Application::class.java.getResourceAsStream("/empty.jpg")?.readBytes() ?: ByteArray(0)
 
-//        val image = File("test.tiff")
-//        val img = ImageConverter.convertImage(image.inputStream())
-
-            call.caching = CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 600))
-            call.response.header(HttpHeaders.ContentType, "image/jpeg")
-            call.respondBytes(img)
+                call.caching = CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 600))
+                call.response.header(HttpHeaders.ContentType, "image/jpeg")
+                call.respondBytes(img)
+            }
         }
 
         // Nahrání obrázku aktuálně přihlášeného uživatele.
@@ -152,7 +157,12 @@ fun Route.userRoutes() {
             val userId = call.principal<UserPrincipal>()!!.userId
             val stream = call.receiveChannel().toInputStream()
 
-//            Validator.validateImage(stream)
+            if (!Validator.validateImage(stream)) {
+                call.respond(HttpStatusCode.BadRequest, "Chybné rozměry obrázku. Musí být 800xXXX")
+
+                return@post
+            }
+
             val image = ImageConverter.convertImage(stream)
             userRepository.uploadImg(userId, image)
 
