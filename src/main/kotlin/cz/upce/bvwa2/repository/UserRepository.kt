@@ -113,8 +113,8 @@ class UserRepository(
     }
 
     // Ověření, zda uživatel existuje.
-    fun doesUserExist(userNickName: String): Boolean{
-        return userDao.getByNickname(userNickName) != null
+    fun doesUserExist(userNickName: String): Boolean = transaction{
+        userDao.getByNickname(userNickName) != null
     }
 
     // Získání seznamu všech rolí.
