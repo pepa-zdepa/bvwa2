@@ -58,9 +58,9 @@ class MessagesDao(
         }
     }
 
-    override fun numberOfUnseenMessages(from: String, to: String): Int {
+    override fun numberOfUnseenMessages(to: String): Int {
         return Messages
-            .select { (Messages.to eq from or (Messages.from eq to)) and (Messages.seen eq false) }
+            .select { (Messages.to eq to) and (Messages.seen eq false) }
             .count().toInt()
     }
 

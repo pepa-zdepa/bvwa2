@@ -46,9 +46,8 @@ class MessageRepository(
     }
 
     fun getUnseenMessages(userId: Long): Int = transaction {
-        val userFrom = userDao.getById(userId)?.nickName!!
         val userTo = userDao.getById(userId)?.nickName!!
-        messagesDao.numberOfUnseenMessages(userFrom, userTo)
+        messagesDao.numberOfUnseenMessages(userTo)
     }
 
 
