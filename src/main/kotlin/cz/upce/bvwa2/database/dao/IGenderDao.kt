@@ -1,5 +1,5 @@
 package cz.upce.bvwa2.database.dao
 
-interface IRoleDao {
+interface IGenderDao {
     fun getAll(): List<String>
 }

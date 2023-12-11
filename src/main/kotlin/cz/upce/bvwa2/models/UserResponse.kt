@@ -11,6 +11,5 @@ data class UserResponse(
     @SerialName(value = "phone") val phone: String,
     @SerialName(value = "gender") val gender: String,
     @SerialName(value = "user") val user: String,
-    @SerialName(value = "photo") val photo: String,
-    @SerialName(value = "role") val role: String
+    @SerialName(value = "role") val role: String,
 )

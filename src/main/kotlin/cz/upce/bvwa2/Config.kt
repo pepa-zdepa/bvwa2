@@ -1,14 +1,13 @@
 package cz.upce.bvwa2
 
-import com.sksamuel.hoplite.*
-import com.sksamuel.hoplite.sources.SystemPropertiesPropertySource
 import java.io.File
 
 data class Config(
     val development: Boolean,
     val server: Server,
     val auth: Auth,
-    val encryptKey: EncryptKey,
+    val security: Security,
+    val database: Database
 ) {
     data class Server(
         val port: Int,
@@ -32,22 +31,12 @@ data class Config(
         )
     }
 
-    data class EncryptKey(
-        val key: String,
+    data class Security(
+        val sqidsAlphabet: String,
+        val databaseEncryptKey: String,
     )
 
+    data class Database(
+        val connectionString: String
+    )
 }
-
-private val overrideConfig: String? = System.getProperty("config", null)
-
-@OptIn(ExperimentalHoplite::class)
-val config = ConfigLoaderBuilder.newBuilder()
-    .addSource(SystemPropertiesPropertySource())
-    .addEnvironmentSource()
-    .let {
-        if (overrideConfig != null) it.addFileSource(overrideConfig)
-        else it
-    }
-    .addResourceSource("/application-default.conf")
-    .build()
-    .loadConfigOrThrow<Config>()

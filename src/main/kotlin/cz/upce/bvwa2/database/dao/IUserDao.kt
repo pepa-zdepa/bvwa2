@@ -11,7 +11,13 @@ interface IUserDao {
 
     fun add(user: User)
 
-    fun update(user: User)
+    fun update(id: Long, user: User)
 
     fun delete(id: Long)
+
+    fun uploadImg(id: Long, img: ByteArray)
+
+    fun updatePassword(id: Long, password: String)
+
+    fun updateRole(id: Long, role: String)
 }

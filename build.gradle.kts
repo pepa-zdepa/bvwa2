@@ -19,9 +19,9 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "1.9.10"
+    kotlin("jvm") version "1.9.20"
     id("io.ktor.plugin") version "2.3.4"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20"
 }
 
 group = "cz.upce.bvwa2"
@@ -49,9 +49,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposed_version")
-    implementation("com.h2database:h2:$h2_version")
-    implementation("org.postgresql:postgresql:$postgres_version")
-    implementation("org.xerial:sqlite-jdbc:3.36.0.3")
+    implementation("org.xerial:sqlite-jdbc:3.40.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
     implementation("io.ktor:ktor-server-metrics-micrometer-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-metrics-jvm:$ktor_version")
@@ -63,14 +61,26 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
-    implementation("io.ktor:ktor-network-tls-certificates:$ktor_version")
+    implementation("io.ktor:ktor-network-tls-certificates-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-http-redirect:$ktor_version")
+    implementation("io.ktor:ktor-server-caching-headers:$ktor_version")
+    implementation("io.ktor:ktor-server-request-validation:$ktor_version")
+    implementation("io.ktor:ktor-server-cors:$ktor_version")
+
+    // Validation
+    implementation("commons-validator:commons-validator:1.8.0")
+    implementation("org.passay:passay:1.6.4")
+
+    // DI
+    implementation("org.kodein.di:kodein-di:7.19.0")
+    implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:7.19.0")
 
     // Auth
     implementation("com.github.omkar-tenkale:ktor-role-based-auth:0.2.0")
 
     //Pass encrypt
     implementation("org.mindrot:jbcrypt:0.4")
+    implementation("org.sqids:sqids:0.1.0")
 
     // Database
     implementation("com.h2database:h2:$h2_version")
@@ -85,7 +95,8 @@ dependencies {
     // Hoplite
     implementation("com.sksamuel.hoplite:hoplite-core:$hoplite_version")
     implementation("com.sksamuel.hoplite:hoplite-hocon:$hoplite_version")
-    implementation("io.ktor:ktor-server-http-redirect-jvm:2.3.4")
+    implementation("io.ktor:ktor-server-http-redirect-jvm:2.3.6")
+    implementation("io.ktor:ktor-server-cors-jvm:2.3.6")
 
     // Tests
     testImplementation(kotlin("test"))
@@ -98,7 +109,7 @@ tasks.test {
     outputs.upToDateWhen { false }
 }
 
-tasks.classes {
+tasks.compileKotlin {
     dependsOn(generateSslCertificate)
 }
 

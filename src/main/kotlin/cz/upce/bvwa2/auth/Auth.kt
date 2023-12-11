@@ -1,7 +1,8 @@
 package cz.upce.bvwa2.auth
 
-import cz.upce.bvwa2.SessionRepo
-import cz.upce.bvwa2.config
+import cz.upce.bvwa2.Config
+import cz.upce.bvwa2.database.encryption.Encryption
+import cz.upce.bvwa2.repository.UserRepository
 import io.github.omkartenkale.ktor_role_based_auth.roleBased
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -9,30 +10,27 @@ import io.ktor.server.auth.*
 import io.ktor.server.plugins.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
+import org.kodein.di.instance
+import org.kodein.di.ktor.closestDI
 
 data class UserPrincipal(
     val userId: Long, // TODO get from DB
+    val username: String,
     val remoteHost: String,
     val expiration: Long,
-    val roles: Set<String> = setOf("user"),
+    val role: String,
 ) : Principal
 
-// TODO database storage
-//val sessionStorage = directorySessionStorage(File("build/.sessions"), true) // bez transform(...) vyhodí "sessionId not set" po logout
-val sessionStorage = object : SessionStorage {
-    val repo = SessionRepo()
-
-    override suspend fun invalidate(id: String) = repo.delete(id)
-
-    override suspend fun read(id: String) = repo.getById(id)?.data ?: throw NoSuchElementException("Session $id not found")
-
-    override suspend fun write(id: String, value: String) = repo.add(id, value)
-
-}
-private fun getExpiration() = System.currentTimeMillis() + config.auth.session.expirationInSeconds * 1000
 private fun validateExpiration(expiration: Long) = expiration > System.currentTimeMillis()
 
 fun Application.configureAuth() {
+    val userRepository by closestDI().instance<UserRepository>()
+    val config by closestDI().instance<Config>()
+    val sessionStorage by closestDI().instance<SessionStorage>()
+    val encryption by closestDI().instance<Encryption>()
+
+    fun getExpiration() = System.currentTimeMillis() + config.auth.session.expirationInSeconds * 1000
+
     install(Sessions) {
         cookie<UserPrincipal>("user_session", sessionStorage) {
             cookie.path = "/"
@@ -50,9 +48,10 @@ fun Application.configureAuth() {
             passwordParamName = "password"
 
             validate {credentials ->
-                // TODO get data from DB
-                if (credentials.name == "user" && credentials.password == "pass") {
-                    UserPrincipal(0, request.origin.remoteHost, getExpiration())
+                val user = userRepository.getUserByNickname(credentials.name) ?: return@validate null
+
+                if (encryption.checkPassword(credentials.password, user.password)) {
+                    UserPrincipal(user.id, user.nickName, request.origin.remoteHost, getExpiration(), user.role.lowercase())
                 } else {
                     null
                 }
@@ -82,7 +81,7 @@ fun Application.configureAuth() {
 
         roleBased {
             extractRoles {
-                (it as UserPrincipal).roles
+                setOf((it as UserPrincipal).role)
             }
             throwErrorOnUnauthorizedResponse = true
         }
