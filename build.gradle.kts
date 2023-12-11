@@ -67,6 +67,11 @@ dependencies {
     implementation("io.ktor:ktor-server-request-validation:$ktor_version")
     implementation("io.ktor:ktor-server-cors:$ktor_version")
 
+    // Ktor client
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+
     // Validation
     implementation("commons-validator:commons-validator:1.8.0")
     implementation("org.passay:passay:1.6.4")

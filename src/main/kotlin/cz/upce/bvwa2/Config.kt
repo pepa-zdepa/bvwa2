@@ -23,6 +23,7 @@ data class Config(
     }
     data class Auth(
         val session: Session,
+        val loginServerUrl: String,
     ) {
         data class Session(
             val encryptKey: String,

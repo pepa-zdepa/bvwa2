@@ -103,5 +103,4 @@ fun Application.module() {
     configurePlugins()
     configureAuth()
     configureRoutes()
-    //EncryptionFactory.init()
 }

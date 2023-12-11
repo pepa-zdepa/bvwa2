@@ -10,7 +10,6 @@ import io.ktor.server.auth.*
 import io.ktor.server.plugins.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
-import kotlinx.datetime.Clock
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
@@ -28,7 +27,12 @@ fun Application.configureAuth() {
     val userRepository by closestDI().instance<UserRepository>()
     val config by closestDI().instance<Config>()
     val sessionStorage by closestDI().instance<SessionStorage>()
-    val encryption by closestDI().instance<Encryption>()
+
+    val client = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            json()
+        }
+    }
 
     fun getExpiration() = Clock.System.now().toEpochMilliseconds() + config.auth.session.expirationInSeconds * 1000
 
@@ -49,14 +53,19 @@ fun Application.configureAuth() {
             passwordParamName = "password"
 
             validate {credentials ->
-                val user = userRepository.getUserByNickname(credentials.name) ?: return@validate null
+                val response = client.submitForm(
+                    url = config.auth.loginServerUrl,
+                    formParameters = parameters {
+                        append("user", credentials.name)
+                        append("password", credentials.password)
+                    }
+                )
 
-                println(getExpiration())
-                if (encryption.checkPassword(credentials.password, user.password)) {
-                    UserPrincipal(user.id, user.nickName, request.origin.remoteHost, getExpiration(), user.role.lowercase())
-                } else {
-                    null
-                }
+                if (response.status != HttpStatusCode.OK)
+                    return@validate null
+
+                val body = response.body<LoginRequest>()
+                UserPrincipal(body.id, body.nickname, request.origin.remoteHost, getExpiration(), body.role.lowercase())
             }
 
             challenge {
