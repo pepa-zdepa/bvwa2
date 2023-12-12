@@ -11,9 +11,9 @@ import io.ktor.server.routing.*
 
 fun Application.configureRoutes() {
     routing {
-//        singlePageApplication {
-//            react("react-app")
-//        }
+        singlePageApplication {
+            react("fe/build")
+        }
 
         authRoutes()
         userRoutes()
