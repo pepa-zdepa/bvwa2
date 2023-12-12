@@ -113,7 +113,7 @@ class UserRepository(
     }
 
     // Ověření, zda uživatel existuje.
-    fun doesUserExist(userNickName: String): Boolean = transaction{
+    fun doesUserExist(userNickName: String): Boolean = transaction {
         userDao.getByNickname(userNickName) != null
     }
 

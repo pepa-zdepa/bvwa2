@@ -15,6 +15,9 @@ fun Application.configurePlugins() {
 
     install(CORS) {
         allowCredentials = true
+        anyHost()
+        allowSameOrigin = true
+        allowNonSimpleContentTypes = true
 
         allowMethod(HttpMethod.Get)
         allowMethod(HttpMethod.Post)
