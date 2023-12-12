@@ -1,20 +1,28 @@
 package cz.upce.bvwa2.auth
 
 import cz.upce.bvwa2.Config
-import cz.upce.bvwa2.database.encryption.Encryption
+import cz.upce.bvwa2.models.LoginRequest
 import cz.upce.bvwa2.repository.UserRepository
 import io.github.omkartenkale.ktor_role_based_auth.roleBased
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.forms.*
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.plugins.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
+import kotlinx.datetime.Clock
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
+
 data class UserPrincipal(
-    val userId: Long, // TODO get from DB
+    val userId: Long,
     val username: String,
     val remoteHost: String,
     val expiration: Long,
