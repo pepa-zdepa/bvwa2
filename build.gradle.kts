@@ -110,7 +110,7 @@ tasks.test {
 }
 
 tasks.compileKotlin {
-    dependsOn(generateSslCertificate)
+//    dependsOn(generateSslCertificate)
 }
 
 val generateSslCertificate by tasks.registering {
