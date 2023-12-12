@@ -16,12 +16,8 @@ fun Application.configurePlugins() {
     install(CORS) {
         allowCredentials = true
         anyHost()
-//        allowHost("127.0.0.1:5500")
         allowSameOrigin = true
         allowNonSimpleContentTypes = true
-
-//        allowHeader("user_session")
-//        exposeHeader("user_session")
 
         allowMethod(HttpMethod.Get)
         allowMethod(HttpMethod.Post)

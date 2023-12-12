@@ -10,6 +10,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.plugins.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
+import kotlinx.datetime.Clock
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
@@ -29,7 +30,7 @@ fun Application.configureAuth() {
     val sessionStorage by closestDI().instance<SessionStorage>()
     val encryption by closestDI().instance<Encryption>()
 
-    fun getExpiration() = System.currentTimeMillis() + config.auth.session.expirationInSeconds * 1000
+    fun getExpiration() = Clock.System.now().toEpochMilliseconds() + config.auth.session.expirationInSeconds * 1000
 
     install(Sessions) {
         cookie<UserPrincipal>("user_session", sessionStorage) {
@@ -50,6 +51,7 @@ fun Application.configureAuth() {
             validate {credentials ->
                 val user = userRepository.getUserByNickname(credentials.name) ?: return@validate null
 
+                println(getExpiration())
                 if (encryption.checkPassword(credentials.password, user.password)) {
                     UserPrincipal(user.id, user.nickName, request.origin.remoteHost, getExpiration(), user.role.lowercase())
                 } else {
