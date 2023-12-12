@@ -36,8 +36,8 @@ fun Application.configureAuth() {
             cookie.path = "/"
             cookie.maxAgeInSeconds = config.auth.session.expirationInSeconds
             cookie.secure = true
-            cookie.httpOnly = true
-            cookie.extensions["SameSite"] = "lax"
+            cookie.httpOnly = false
+            cookie.extensions["SameSite"] = "none"
 //            transform(SessionTransportTransformerEncrypt(hex(config.auth.session.encryptKey), hex(config.auth.session.signKey)))
         }
     }

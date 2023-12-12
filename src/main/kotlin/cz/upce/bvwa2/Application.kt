@@ -46,6 +46,9 @@ fun main() {
             appConfig.server.ssl.keyStorePassword.toCharArray(),
         )
 
+//        connector {
+//            port = appConfig.server.port
+//        }
         sslConnector(
             keyStore = keyStore,
             keyAlias = appConfig.server.ssl.keyAlias,
