@@ -8,6 +8,7 @@ import Header from './Header';
 import Footer from './Footer';
 import MessageDetail from './MessageDetail';
 import AdminPanel from './AdminPanel';
+import MailPage from "./MailPage";
 
 let loggedInUser;
 function App() {
@@ -18,7 +19,7 @@ function App() {
         <Routes>
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile loggedInUser={loggedInUser} />} />
-          <Route path="/messages" element={<MessageDetail loggedInUser={loggedInUser}/>}/>
+          <Route path="/messages" element={<MailPage loggedInUser={loggedInUser}/>}/>
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/" element={<Home loggedInUser={loggedInUser} />} />
         </Routes>

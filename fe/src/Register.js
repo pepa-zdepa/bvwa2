@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import InputValidator from './InputValidator'; // Import the utility
 
 function Register() {
@@ -21,6 +21,15 @@ function Register() {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
+
+        // Check if any of the input fields are null or empty
+        if (
+            Object.values(userProfile).some((value) => value === null || value.trim() === '')
+        ) {
+            // Display a notification for empty fields
+            alert('Please fill in all required fields.');
+            return;
+        }
 
         // Validate password
         if (!InputValidator.isPasswordValid(userProfile.password)) {
@@ -57,7 +66,7 @@ function Register() {
                 mode: 'cors',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json', //fa@425gWT45w5!3
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     first_name: userProfile.first_name,
@@ -75,14 +84,14 @@ function Register() {
                 window.location.reload();
             } else {
                 // Display error if user already exists
-                alert('Uživatel s tímto loginem jíž existuje.');
+                alert('Uživatel s tímto loginem již existuje.');
             }
         }
     };
 
     const handleInputChange = (e) => {
-        const {name, value} = e.target;
-        setUserProfile({...userProfile, [name]: value});
+        const { name, value } = e.target;
+        setUserProfile({ ...userProfile, [name]: value });
     };
 
     return (
@@ -116,7 +125,7 @@ function Register() {
                         id="password"
                         name="password"
                         value={userProfile.password}
-                        onChange={handleInputChange} //f0rgott3N!
+                        onChange={handleInputChange}
                         className="w-full px-4 py-2 border rounded-lg"
                         required
                     />
