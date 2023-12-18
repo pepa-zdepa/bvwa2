@@ -6,32 +6,27 @@ function Profile() {
     const [userProfile, setUserProfile] = useState({});
     const [originalUserProfile, setOriginalUserProfile] = useState({});
 
+    const fetchData = () => {
+        fetch("https://127.0.0.1:8443/user",
+            {
+                credentials: "include",
+                method: "get"
+            }).then(response => {
+            return response.json()
+        }).then(data => {
+            setUserProfile(data);
+            setOriginalUserProfile(data);
+        });
+    }
+
     useEffect(() => {
-        const fetchData = async() => {
-            const profileGetData = await fetch("https://127.0.0.1:8443/user",
-                {
-                    credentials: "include",
-                    method: "get"
-                });
-
-            const profileGotData = await profileGetData.json();
-            console.log(profileGotData)
-
-            setUserProfile(profileGotData);
-            setOriginalUserProfile(profileGotData);
-        }
-
         fetchData();
     }, []);
 
     const handleEditToggle = () => {
         setEditMode(!editMode);
     };
-
-
     const handleSaveProfile = async (updatedUser) => {
-        console.log(updatedUser)
-
         const resultProfile = await fetch(`https://127.0.0.1:8443/user`, {
             method: 'PUT',
             credentials: "include",
@@ -48,8 +43,6 @@ function Profile() {
                 phone: updatedUser.phone
             })
         })
-
-        console.log(updatedUser.profilePicture)
 
         if (!resultProfile.ok) {
             alert(await resultProfile.text())

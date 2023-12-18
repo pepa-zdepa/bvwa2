@@ -40,6 +40,14 @@ repositories {
     maven { url = uri("https://jitpack.io") } // ktor-role-based-auth
 }
 
+ktor {
+    docker {
+        jreVersion.set(JavaVersion.VERSION_11)
+        localImageName.set("bvwa2")
+        imageTag.set("0.0.1-preview")
+    }
+}
+
 dependencies {
     // Ktor
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
