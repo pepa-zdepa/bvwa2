@@ -74,6 +74,7 @@ dependencies {
     implementation("io.ktor:ktor-server-caching-headers:$ktor_version")
     implementation("io.ktor:ktor-server-request-validation:$ktor_version")
     implementation("io.ktor:ktor-server-cors:$ktor_version")
+    implementation("io.ktor:ktor-server-forwarded-header:$ktor_version")
 
     // Validation
     implementation("commons-validator:commons-validator:1.8.0")

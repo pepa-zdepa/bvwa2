@@ -3,6 +3,7 @@ package cz.upce.bvwa2.plugins
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.plugins.forwardedheaders.*
 
 fun Application.configurePlugins() {
     configureCompression()
@@ -27,4 +28,6 @@ fun Application.configurePlugins() {
         allowMethod(HttpMethod.Patch)
         allowHeader(HttpHeaders.Authorization)
     }
+
+    install(ForwardedHeaders)
 }
