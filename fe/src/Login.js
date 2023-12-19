@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
+import apiUrl from "./Url";
 
 function Login({loggedInUser}) {
     const navigate = useNavigate();
@@ -32,7 +33,7 @@ function Login({loggedInUser}) {
         formData.append('user', loginData.nickname);
         formData.append('password', loginData.password);
 
-        const loginGetData = await fetch("https://127.0.0.1:8443/auth/login",
+        const loginGetData = await fetch(`${apiUrl}/auth/login`,
             {
                 credentials: "include", // include, same-origin, omit
                 mode: "cors", // no-cors,cors, same-origin
