@@ -2,6 +2,8 @@ package cz.upce.bvwa2.plugins
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.application.ApplicationCallPipeline.ApplicationPhase.Plugins
+import io.ktor.server.plugins.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.forwardedheaders.*
 
@@ -30,4 +32,8 @@ fun Application.configurePlugins() {
     }
 
     install(ForwardedHeaders)
+
+    intercept(Plugins) {
+        call.mutableOriginConnectionPoint.scheme = "https"
+    }
 }
