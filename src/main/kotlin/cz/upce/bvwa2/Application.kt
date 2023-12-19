@@ -20,7 +20,6 @@ import org.kodein.di.*
 import org.kodein.di.ktor.closestDI
 import org.kodein.di.ktor.di
 import org.slf4j.LoggerFactory
-import java.security.KeyStore
 
 private val overrideConfig: String? = System.getProperty("config", null)
 
@@ -41,22 +40,23 @@ fun main() {
         log = LoggerFactory.getLogger("ktor.application")
         developmentMode = appConfig.development
 
-        val keyStore = KeyStore.getInstance(
-            appConfig.server.ssl.keyStorePath,
-            appConfig.server.ssl.keyStorePassword.toCharArray(),
-        )
+//        val keyStore = KeyStore.getInstance(
+//            appConfig.server.ssl.keyStorePath,
+//            appConfig.server.ssl.keyStorePassword.toCharArray(),
+//        )
 
-//        connector {
-//            port = appConfig.server.port
-//        }
-        sslConnector(
-            keyStore = keyStore,
-            keyAlias = appConfig.server.ssl.keyAlias,
-            keyStorePassword = { appConfig.server.ssl.keyStorePassword.toCharArray() },
-            privateKeyPassword = { appConfig.server.ssl.privateKeyPassword.toCharArray() }) {
-            port = appConfig.server.ssl.port
-            keyStorePath = appConfig.server.ssl.keyStorePath
+        connector {
+            port = appConfig.server.port
         }
+
+//        sslConnector(
+//            keyStore = keyStore,
+//            keyAlias = appConfig.server.ssl.keyAlias,
+//            keyStorePassword = { appConfig.server.ssl.keyStorePassword.toCharArray() },
+//            privateKeyPassword = { appConfig.server.ssl.privateKeyPassword.toCharArray() }) {
+//            port = appConfig.server.ssl.port
+//            keyStorePath = appConfig.server.ssl.keyStorePath
+//        }
         module(Application::module)
     }
 

@@ -71,6 +71,24 @@ fun Route.userRoutes() {
         call.respond(userRepository.getAllGenders())
     }
 
+    // Získání obrázku uživatele.
+    get<User.Image> {
+        try {
+            val userId = idConverter.decode(it.id)
+            val img = userRepository.getImg(userId)
+
+//                call.caching = CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 600))
+            call.response.header(HttpHeaders.ContentType, "image/jpeg")
+            call.respondBytes(img)
+        } catch (e: Exception) {
+            val img = Application::class.java.getResourceAsStream("/empty.jpg")?.readBytes() ?: ByteArray(0)
+
+//                call.caching = CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 600))
+            call.response.header(HttpHeaders.ContentType, "image/jpeg")
+            call.respondBytes(img)
+        }
+    }
+
     // Autentikované operace.
     authenticate("session") {
         // Získání informací o aktuálně přihlášeném uživateli.
@@ -130,24 +148,6 @@ fun Route.userRoutes() {
             messageRepository.updateMessageSeen(idConverter.decode(it.parent.messageId), userId)
 
             call.respond(HttpStatusCode.OK)
-        }
-
-        // Získání obrázku uživatele.
-        get<User.Image> {
-            try {
-                val userId = idConverter.decode(it.id)
-                val img = userRepository.getImg(userId)
-
-//                call.caching = CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 600))
-                call.response.header(HttpHeaders.ContentType, "image/jpeg")
-                call.respondBytes(img)
-            } catch (e: Exception) {
-                val img = Application::class.java.getResourceAsStream("/empty.jpg")?.readBytes() ?: ByteArray(0)
-
-//                call.caching = CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 600))
-                call.response.header(HttpHeaders.ContentType, "image/jpeg")
-                call.respondBytes(img)
-            }
         }
 
         // Nahrání obrázku aktuálně přihlášeného uživatele.
