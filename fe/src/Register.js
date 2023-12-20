@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import InputValidator from './InputValidator'; // Import the utility
+import InputValidator from './InputValidator';
+import apiUrl from "./Url"; // Import the utility
 
 function Register() {
     const navigate = useNavigate();
@@ -53,14 +54,14 @@ function Register() {
 
         // Registration logic here
         const storedUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
-        const isUserExists = await fetch(`https://127.0.0.1:8443/auth/check-username-available?username=${userProfile.nickname}`)
+        const isUserExists = await fetch(`${apiUrl}/auth/check-username-available?username=${userProfile.nickname}`)
         const isUserExists_data = await isUserExists.text();
 
         console.log(isUserExists_data);
 
         if (isUserExists_data == '1') {
             localStorage.setItem('registeredUsers', JSON.stringify(storedUsers));
-            const registerUser = await fetch(`https://127.0.0.1:8443/user`, {
+            const registerUser = await fetch(`${apiUrl}/user`, {
                 method: 'POST',
                 credentials: "include",
                 mode: 'cors',

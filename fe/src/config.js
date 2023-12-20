@@ -1,4 +1,6 @@
-const API_BASE_URL = 'https://127.0.0.1:8443';
+import apiUrl from "./Url";
+
+const API_BASE_URL = apiUrl;
 
 export const API_URLS = {
   LOGIN: `${API_BASE_URL}/auth/login`,

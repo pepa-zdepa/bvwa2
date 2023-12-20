@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import ProfileForm from './ProfileForm';
+import apiUrl from "./Url";
 
 function Profile() {
     const [editMode, setEditMode] = useState(false);
@@ -7,7 +8,7 @@ function Profile() {
     const [originalUserProfile, setOriginalUserProfile] = useState({});
 
     const fetchData = () => {
-        fetch("https://127.0.0.1:8443/user",
+        fetch("${apiUrl}/user",
             {
                 credentials: "include",
                 method: "get"
@@ -27,7 +28,7 @@ function Profile() {
         setEditMode(!editMode);
     };
     const handleSaveProfile = async (updatedUser) => {
-        const resultProfile = await fetch(`https://127.0.0.1:8443/user`, {
+        const resultProfile = await fetch(`${apiUrl}/user`, {
             method: 'PUT',
             credentials: "include",
             mode: 'cors',
@@ -52,7 +53,7 @@ function Profile() {
         const formData = new FormData();
         formData.append("fileupload", updatedUser.profilePicture);
 
-        const resultPhoto = await fetch(`https://127.0.0.1:8443/user/upload-image`, {
+        const resultPhoto = await fetch(`${apiUrl}/user/upload-image`, {
             method: 'POST',
             credentials: "include",
             headers: {

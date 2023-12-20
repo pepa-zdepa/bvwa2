@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiUrl from "./Url";
 
 function UserDetails({ user, fetchUserData }) {
     const [editedUser, setEditedUser] = useState({
@@ -59,7 +60,7 @@ function UserDetails({ user, fetchUserData }) {
         }
 
         const userId = user.id;
-        fetch(`https://127.0.0.1:8443/admin/user/${userId}`, {
+        fetch(`${apiUrl}/${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -76,7 +77,7 @@ function UserDetails({ user, fetchUserData }) {
                 setSuccessNotification(true);
                 setTimeout(() => {
                     setSuccessNotification(false);
-                    fetch(`https://127.0.0.1:8443/admin/user/${userId}`, {
+                    fetch(`${apiUrl}/${userId}`, {
                         credentials: 'include',
                     })
                         .then((response) => {

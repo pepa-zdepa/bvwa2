@@ -78,7 +78,7 @@ const MailPage = () => {
 
     const fetchMessages = async () => {
         const direction = currentView === 'odeslaná' ? 'out' : 'in';
-        const url = `https://127.0.0.1:8443/user/messages?direction=${direction}`;
+        const url = `${apiUrl}/user/messages?direction=${direction}`;
 
         try {
             const response = await fetch(url, { credentials: "include" });
@@ -121,7 +121,7 @@ const MailPage = () => {
         };
 
         try {
-            const response = await fetch('https://127.0.0.1:8443/user/messages', {
+            const response = await fetch(`${apiUrl}/user/messages`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ const MailPage = () => {
             };
 
             try {
-                const response = await fetch('https://127.0.0.1:8443/user/messages', {
+                const response = await fetch(`${apiUrl}/user/messages`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import apiUrl from "./Url";
 
 function ProfileForm({user, onSave, onCancel}) {
     const [editMode, setEditMode] = useState(false);
@@ -11,7 +12,7 @@ function ProfileForm({user, onSave, onCancel}) {
     const [passwordError, setPasswordError] = useState(null);
     const [imageError, setImageError] = useState(null);
 
-    const image = "https://127.0.0.1:8443/user/" + JSON.parse(localStorage.getItem('loggedInUser')).id + "/image"
+    const image = "${apiUrl}/user/" + JSON.parse(localStorage.getItem('loggedInUser')).id + "/image"
 
     useEffect(() => {
         setUserProfile({...user});
@@ -35,7 +36,7 @@ function ProfileForm({user, onSave, onCancel}) {
             return;
         }
 
-        const result = await fetch(`https://127.0.0.1:8443/user/update-password`, {
+        const result = await fetch(`${apiUrl}/user/update-password`, {
             method: 'PUT',
             credentials: "include",
             mode: 'cors',

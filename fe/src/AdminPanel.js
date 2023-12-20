@@ -1,5 +1,6 @@
     import React, { useEffect, useState } from 'react';
-    import UserDetails from './UserDetails'; // Import the UserDetails component
+    import UserDetails from './UserDetails';
+    import apiUrl from "./Url"; // Import the UserDetails component
 
     function AdminPanel() {
       const [users, setUsers] = useState([]);
@@ -11,7 +12,7 @@
         }, []);
         const fetchUserData = () => {
             // Fetch user data from the API
-            fetch('https://127.0.0.1:8443/admin/users', {
+            fetch(`${apiUrl}/admin/users`, {
                 credentials: 'include',
             })
                 .then((response) => {
