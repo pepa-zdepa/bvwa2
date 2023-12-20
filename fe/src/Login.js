@@ -12,12 +12,13 @@ function Login({loggedInUser}) {
 
     const [loginError, setLoginError] = useState(null);
 
-    useEffect(() => {
-        if (localStorage.getItem('loggedInUser')) {
-            navigate('/profile');
-            window.location.reload();
-        }
-    }, [navigate]);
+    // useEffect(async () => {
+    //     try {
+    //         await fetch(`${apiUrl}/auth/check-username-available?username=`)
+    //     } catch (e) {
+    //         console.log(e)
+    //     }
+    // }, []);
 
     const handleInputChange = (e) => {
         const {name, value} = e.target;
@@ -49,7 +50,7 @@ function Login({loggedInUser}) {
         localStorage.setItem('loggedInUser', JSON.stringify(loginGotData))
         console.log(localStorage.getItem('loggedInUser'))
 
-        navigate('/');
+        navigate('/profile');
         window.location.reload();
     }
 

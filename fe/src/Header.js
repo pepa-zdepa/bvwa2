@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
+import apiUrl from "./Url";
 
 function Header() {
     const navigate = useNavigate();
@@ -8,7 +9,7 @@ function Header() {
     const [user, setUser] = useState(loggedInUser);
 
     const handleLogout = async () => {
-        await fetch("https://127.0.0.1:8443/auth/login",
+        await fetch(`${apiUrl}/auth/logout`,
             {
                 credentials: "include", // include, same-origin, omit
                 mode: "cors", // no-cors,cors, same-origin

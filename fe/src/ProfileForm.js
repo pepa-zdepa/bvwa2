@@ -12,7 +12,7 @@ function ProfileForm({user, onSave, onCancel}) {
     const [passwordError, setPasswordError] = useState(null);
     const [imageError, setImageError] = useState(null);
 
-    const image = "${apiUrl}/user/" + JSON.parse(localStorage.getItem('loggedInUser')).id + "/image"
+    const image = `${apiUrl}/user/` + JSON.parse(localStorage.getItem('loggedInUser')).id + "/image"
 
     useEffect(() => {
         setUserProfile({...user});

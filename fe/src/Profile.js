@@ -8,7 +8,7 @@ function Profile() {
     const [originalUserProfile, setOriginalUserProfile] = useState({});
 
     const fetchData = () => {
-        fetch("${apiUrl}/user",
+        fetch(`${apiUrl}/user`,
             {
                 credentials: "include",
                 method: "get"

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiUrl from "./Url";
 
 // Recursive component to render messages and their nested responses
 const MessageThread = ({ messageId, messages }) => {
